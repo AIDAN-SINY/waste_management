@@ -1,0 +1,12 @@
+{
+  "name": "wastepro-rules-test",
+  "private": true,
+  "description": "Firestore security rules tests (run against the emulator)",
+  "scripts": {
+    "test": "firebase emulators:exec --only firestore --project demo-wastepro \"node --test rules.test.mjs\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^4.0.1",
+    "firebase": "^11.0.0"
+  }
+}

@@ -1,0 +1,9 @@
+node_modules/
+.env
+*.local
+firebase-debug.log
+firebase-debug.*.log
+
+# Local server (npm run local): settings + Firebase admin key ? never commit
+.env.server
+service-account*.json

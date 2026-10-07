@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WastePro — Backoffice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#0F3D2E; --green-soft:#E7EFE9;
+    --gold:#E8A33D; --gold-soft:#FBEDD6;
+    --red:#C1443D; --red-soft:#F8E4E2;
+    --blue:#3D6BE8; --blue-soft:#E7EEFB;
+    --cream:#F5F1E8;
+    --bg:#F6F4EE; --surface:#FFFFFF; --border:#EAE5D8;
+    --text:#182620; --muted:#7C8A80;
+    --radius:16px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+  body{ font-family:'Inter',sans-serif; background:#DEDBD1; color:var(--text); display:flex; align-items:center; justify-content:center; min-height:100vh; padding:24px; }
+  h1,h2,h3,h4{ font-family:'Sora',sans-serif; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  /* ---------- phone shell ---------- */
+  .phone{ width:390px; height:844px; background:#0A0A0A; border-radius:46px; padding:12px; box-shadow:0 40px 80px rgba(0,0,0,0.35); position:relative; }
+  .notch{ position:absolute; top:12px; left:50%; transform:translateX(-50%); width:120px; height:26px; background:#0A0A0A; border-radius:0 0 16px 16px; z-index:80; }
+  .phone-screen{ width:100%; height:100%; border-radius:34px; overflow:hidden; position:relative; background:var(--bg); display:flex; flex-direction:column; }
+  @media (max-width:460px){
+    body{ padding:0; background:var(--bg); }
+    .phone{ width:100%; height:100vh; height:100dvh; border-radius:0; padding:0; box-shadow:none; }
+    .phone-screen{ border-radius:0; }
+    .notch{ display:none; }
+  }
+
+  /* ---------- topbar ---------- */
+  .topbar{ flex:none; background:var(--bg); padding:16px 16px 10px; display:flex; align-items:center; gap:12px; }
+  .icon-btn{ width:36px; height:36px; border-radius:10px; background:var(--surface); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex:none; position:relative; }
+  .icon-btn svg{ width:16px; height:16px; color:var(--green); }
+  .icon-btn .dot{ position:absolute; top:7px; right:8px; width:5px; height:5px; border-radius:50%; background:var(--red); }
+  .topbar-title{ flex:1; min-width:0; }
+  .topbar-title h1{ font-size:17px; font-weight:700; }
+  .topbar-title p{ font-size:11px; color:var(--muted); margin-top:1px; }
+
+  .search-row{ padding:0 16px 10px; max-height:0; overflow:hidden; opacity:0; }
+  .search-row.open{ max-height:60px; opacity:1; padding-bottom:12px; }
+  .search-row .box{ display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--border); border-radius:11px; padding:9px 12px; }
+  .search-row svg{ width:15px; height:15px; color:var(--muted); flex:none; }
+  .search-row input{ border:none; outline:none; background:none; font-size:13px; width:100%; }
+
+  /* ---------- content ---------- */
+  .content{ flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:0 16px 100px; }
+  .content::-webkit-scrollbar{ display:none; }
+  .page{ display:none; }
+  .page.active{ display:block; }
+
+  /* ---------- KPI carousel ---------- */
+  .kpi-scroll{ display:flex; gap:10px; overflow-x:auto; scroll-snap-type:x mandatory; padding:2px 0 14px; margin:0 -16px; padding-left:16px; }
+  .kpi-scroll::-webkit-scrollbar{ display:none; }
+  .kpi-card{ scroll-snap-align:start; flex:none; width:150px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:15px 16px; }
+  .kpi-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .kpi-icon{ width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; }
+  .kpi-icon svg{ width:14px; height:14px; }
+  .kpi-trend{ font-size:10px; font-weight:700; }
+  .kpi-trend.up{ color:#1E9E5A; } .kpi-trend.down{ color:var(--red); }
+  .kpi-val{ font-size:22px; font-weight:700; font-family:'Sora',sans-serif; }
+  .kpi-label{ font-size:11px; color:var(--muted); margin-top:2px; }
+
+  /* ---------- section headers ---------- */
+  .section-title{ font-size:14px; font-weight:700; margin:18px 0 10px; display:flex; align-items:center; justify-content:space-between; }
+  .section-title span{ font-size:11px; font-weight:500; color:var(--muted); }
+
+  /* ---------- charts ---------- */
+  .card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:12px; }
+  .card-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .card-head h4{ font-size:12.5px; font-weight:600; }
+  .card-head .tag{ font-size:10.5px; color:var(--muted); }
+
+  .feed-item{ display:flex; align-items:flex-start; gap:10px; padding:9px 0; border-bottom:1px solid var(--border); }
+  .feed-item:last-child{ border-bottom:none; }
+  .feed-dot{ width:7px; height:7px; border-radius:50%; margin-top:5px; flex:none; }
+  .feed-text p{ font-size:12px; font-weight:500; }
+  .feed-text span{ font-size:10.5px; color:var(--muted); }
+
+  /* ---------- filter chips ---------- */
+  .chip-row{ display:flex; gap:8px; overflow-x:auto; margin:0 -16px 12px; padding:0 16px 2px; }
+  .chip-row::-webkit-scrollbar{ display:none; }
+  .chip{ flex:none; font-size:11.5px; font-weight:500; padding:7px 14px; border-radius:20px; border:1px solid var(--border); background:var(--surface); color:var(--muted); white-space:nowrap; }
+  .chip.active{ background:var(--green); color:var(--cream); border-color:var(--green); }
+
+  /* ---------- item cards (replace tables) ---------- */
+  .item-card{ display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:13px 14px; margin-bottom:9px; }
+  .item-avatar{ width:40px; height:40px; border-radius:50%; background:var(--green-soft); color:var(--green); display:flex; align-items:center; justify-content:center; font-size:12.5px; font-weight:700; flex:none; }
+  .item-main{ flex:1; min-width:0; }
+  .item-main h5{ font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .item-main p{ font-size:11px; color:var(--muted); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .item-right{ display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex:none; }
+  .badge{ display:inline-flex; align-items:center; gap:4px; font-size:9.5px; font-weight:700; padding:3px 9px; border-radius:20px; white-space:nowrap; }
+  .badge.green{ background:var(--green-soft); color:#1E9E5A; }
+  .badge.gold{ background:var(--gold-soft); color:#B4740E; }
+  .badge.red{ background:var(--red-soft); color:var(--red); }
+  .badge.gray{ background:#EFEDE5; color:var(--muted); }
+  .kebab{ width:26px; height:26px; border-radius:8px; border:none; background:none; display:flex; align-items:center; justify-content:center; color:var(--muted); }
+  .kebab svg{ width:15px; height:15px; }
+  .empty-state{ text-align:center; padding:44px 20px; color:var(--muted); font-size:12.5px; }
+
+  /* ---------- FAB ---------- */
+  .fab{
+    position:absolute; right:18px; bottom:92px; z-index:40;
+    width:52px; height:52px; border-radius:50%; background:var(--gold); border:none;
+    display:flex; align-items:center; justify-content:center; box-shadow:0 10px 24px rgba(232,163,61,0.4);
+  }
+  .fab svg{ width:22px; height:22px; color:#2A1B05; }
+
+  /* ---------- bottom tab bar ---------- */
+  .tabbar{
+    position:absolute; left:0; right:0; bottom:0; z-index:35;
+    background:rgba(255,255,255,0.92); backdrop-filter:blur(14px);
+    border-top:1px solid var(--border);
+    display:flex; padding:9px 4px calc(env(safe-area-inset-bottom,0px) + 9px);
+  }
+  .tab-item{ flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; background:none; border:none; color:var(--muted); padding:4px; }
+  .tab-item svg{ width:19px; height:19px; }
+  .tab-item span{ font-size:9px; font-weight:600; }
+  .tab-item.active{ color:var(--green); }
+
+  /* ---------- side menu ---------- */
+  .overlay{ position:fixed; inset:0; background:rgba(10,42,32,0.4); z-index:88; opacity:0; pointer-events:none; }
+  .overlay.show{ pointer-events:auto; }
+  .side-menu{
+    position:absolute; top:0; left:0; height:100%; width:78%; max-width:300px;
+    background:var(--green); color:var(--cream); z-index:92; transform:translateX(-100%);
+    display:flex; flex-direction:column; padding:20px 0;
+  }
+  .sm-brand{ display:flex; align-items:center; gap:9px; padding:6px 20px 22px; }
+  .sm-brand svg{ width:26px; height:26px; }
+  .sm-brand h2{ font-size:15px; font-weight:700; }
+  .sm-brand span{ color:var(--gold); }
+  .sm-item{ display:flex; align-items:center; gap:12px; padding:12px 20px; background:none; border:none; color:rgba(245,241,232,0.75); font-size:13.5px; font-weight:500; width:100%; text-align:left; }
+  .sm-item svg{ width:17px; height:17px; flex:none; }
+  .sm-item.active{ color:var(--gold); background:rgba(232,163,61,0.1); }
+  .sm-foot{ margin-top:auto; padding:16px 20px; border-top:1px solid rgba(245,241,232,0.12); font-size:11px; color:rgba(245,241,232,0.5); }
+
+  /* ---------- bottom sheet (create/edit) ---------- */
+  .sheet{
+    position:absolute; left:0; right:0; bottom:0; z-index:95;
+    background:var(--surface); border-radius:22px 22px 0 0;
+    max-height:88%; display:flex; flex-direction:column;
+    transform:translateY(100%);
+    box-shadow:0 -20px 50px rgba(0,0,0,0.2);
+  }
+  .sheet-handle{ width:36px; height:4px; border-radius:3px; background:var(--border); margin:10px auto 4px; }
+  .sheet-head{ display:flex; align-items:center; justify-content:space-between; padding:12px 18px 14px; border-bottom:1px solid var(--border); }
+  .sheet-head button{ background:none; border:none; font-size:13px; font-weight:600; padding:6px 4px; }
+  .sheet-head .cancel{ color:var(--muted); }
+  .sheet-head .save{ color:var(--green); }
+  .sheet-head h3{ font-size:14.5px; font-weight:700; }
+  .sheet-body{ flex:1; overflow-y:auto; padding:18px; padding-bottom:calc(env(safe-area-inset-bottom,0px) + 18px); }
+  .form-field{ margin-bottom:15px; }
+  .form-field label{ display:block; font-size:11px; font-weight:600; color:var(--muted); margin-bottom:6px; }
+  .form-field input, .form-field select{
+    width:100%; padding:11px 12px; border:1px solid var(--border); border-radius:10px; font-size:14px;
+    outline:none; background:var(--bg); color:var(--text);
+  }
+  .form-field input:focus, .form-field select:focus{ border-color:var(--green); background:var(--surface); }
+  .form-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+  /* ---------- action sheet (edit/delete on item) ---------- */
+  .action-sheet{
+    position:absolute; left:12px; right:12px; bottom:12px; z-index:95;
+    transform:translateY(120%);
+  }
+  .as-group{ background:var(--surface); border-radius:16px; overflow:hidden; margin-bottom:8px; }
+  .as-btn{ width:100%; padding:15px; background:none; border:none; border-bottom:1px solid var(--border); font-size:14px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:8px; }
+  .as-btn:last-child{ border-bottom:none; }
+  .as-btn.danger{ color:var(--red); }
+  .as-btn svg{ width:16px; height:16px; }
+  .as-cancel{ width:100%; padding:15px; background:var(--surface); border:none; border-radius:16px; font-size:14px; font-weight:700; color:var(--green); }
+
+  /* ---------- toast ---------- */
+  .toast-stack{ position:absolute; top:16px; left:16px; right:16px; z-index:99; display:flex; flex-direction:column; gap:8px; }
+  .toast{ display:flex; align-items:center; gap:9px; background:var(--green); color:var(--cream); padding:12px 14px; border-radius:12px; font-size:12px; font-weight:500; box-shadow:0 14px 26px rgba(0,0,0,0.2); transform:translateY(-30px); opacity:0; }
+  .toast svg{ width:15px; height:15px; color:var(--gold); flex:none; }
+  .toast.error{ background:var(--red); } .toast.error svg{ color:#fff; }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="phone-screen">
+
+    <!-- ================= TOPBAR ================= -->
+    <div class="topbar">
+      <button class="icon-btn" id="menuBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div class="topbar-title"><h1 id="pageTitle">Vue d'ensemble</h1><p id="pageSub">Aujourd'hui</p></div>
+      <button class="icon-btn" id="searchBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+      <button class="icon-btn" id="bellBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="dot"></span></button>
+    </div>
+    <div class="search-row" id="searchRow">
+      <div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="searchInput" placeholder="Rechercher..."></div>
+    </div>
+
+    <!-- ================= CONTENT ================= -->
+    <div class="content">
+
+      <!-- ===== DASHBOARD ===== -->
+      <section class="page active" id="page-dashboard">
+        <div class="kpi-scroll">
+          <div class="kpi-card">
+            <div class="kpi-top"><div class="kpi-icon" style="background:var(--green-soft);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><span class="kpi-trend up">↑4.2%</span></div>
+            <div class="kpi-val"><span id="kpiClients">0</span></div><div class="kpi-label">Clients actifs</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top"><div class="kpi-icon" style="background:var(--gold-soft);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><span class="kpi-trend up">↑12</span></div>
+            <div class="kpi-val"><span id="kpiToday">0</span></div><div class="kpi-label">Collectes aujourd'hui</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top"><div class="kpi-icon" style="background:var(--blue-soft);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><span class="kpi-trend up">↑8.7%</span></div>
+            <div class="kpi-val">₣<span id="kpiRevenue">0</span></div><div class="kpi-label">Revenus (milliers)</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top"><div class="kpi-icon" style="background:var(--red-soft);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><span class="kpi-trend down">↓1.1%</span></div>
+            <div class="kpi-val"><span id="kpiRate">0</span>%</div><div class="kpi-label">Taux de réussite</div>
+          </div>
+        </div>
+
+        <div class="card"><div class="card-head"><h4>Revenus (6 mois)</h4><span class="tag">XAF, milliers</span></div><canvas id="revenueChart" height="130"></canvas></div>
+        <div class="card"><div class="card-head"><h4>Collectes — 7 derniers jours</h4></div><canvas id="weekChart" height="130"></canvas></div>
+        <div class="section-title">Activité récente<span>Temps réel</span></div>
+        <div class="card" id="activityFeed"></div>
+      </section>
+
+      <!-- ===== CLIENTS ===== -->
+      <section class="page" id="page-clients">
+        <div class="chip-row" id="chips-clients">
+          <button class="chip active" data-filter="all">Tous</button>
+          <button class="chip" data-filter="Actif">Actifs</button>
+          <button class="chip" data-filter="Suspendu">Suspendus</button>
+        </div>
+        <div id="clientsList"></div>
+      </section>
+
+      <!-- ===== COLLECTEURS ===== -->
+      <section class="page" id="page-collecteurs">
+        <div class="chip-row" id="chips-collecteurs">
+          <button class="chip active" data-filter="all">Tous</button>
+          <button class="chip" data-filter="Actif">Actifs</button>
+          <button class="chip" data-filter="Inactif">Inactifs</button>
+        </div>
+        <div id="collecteursList"></div>
+      </section>
+
+      <!-- ===== CONTRATS ===== -->
+      <section class="page" id="page-contrats">
+        <div class="chip-row" id="chips-contrats">
+          <button class="chip active" data-filter="all">Tous</button>
+          <button class="chip" data-filter="Actif">Actifs</button>
+          <button class="chip" data-filter="Expiré">Expirés</button>
+        </div>
+        <div id="contratsList"></div>
+      </section>
+
+      <!-- ===== COLLECTES ===== -->
+      <section class="page" id="page-collectes">
+        <div class="chip-row" id="chips-collectes">
+          <button class="chip active" data-filter="all">Toutes</button>
+          <button class="chip" data-filter="Effectué">Effectuées</button>
+          <button class="chip" data-filter="Prévu">Prévues</button>
+          <button class="chip" data-filter="Manqué">Manquées</button>
+        </div>
+        <div id="collectesList"></div>
+      </section>
+
+      <!-- ===== FACTURATION ===== -->
+      <section class="page" id="page-facturation">
+        <div class="chip-row" id="chips-factures">
+          <button class="chip active" data-filter="all">Toutes</button>
+          <button class="chip" data-filter="Payée">Payées</button>
+          <button class="chip" data-filter="En attente">En attente</button>
+          <button class="chip" data-filter="En retard">En retard</button>
+        </div>
+        <div id="facturesList"></div>
+      </section>
+
+      <!-- ===== PARAMÈTRES ===== -->
+      <section class="page" id="page-parametres">
+        <div class="section-title">Fréquences de ramassage</div>
+        <div class="card" id="frequencesList"></div>
+        <div class="section-title" style="margin-top:20px;">Informations entreprise</div>
+        <div class="card">
+          <div class="form-field"><label>Company name</label><input type="text" value="WastePro"></div>
+          <div class="form-field"><label>Ville d'opération</label><input type="text" value="Douala"></div>
+          <div class="form-field" style="margin-bottom:0;"><label>Numéro de support</label><input type="text" value="+237 6XX XXX XXX"></div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- FAB -->
+    <button class="fab" id="fabBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+
+    <!-- ================= TAB BAR ================= -->
+    <div class="tabbar">
+      <button class="tab-item active" data-page="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Accueil</span></button>
+      <button class="tab-item" data-page="clients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Clients</span></button>
+      <button class="tab-item" data-page="collectes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Collectes</span></button>
+      <button class="tab-item" data-page="contrats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Contrats</span></button>
+      <button class="tab-item" id="moreTab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>Plus</span></button>
+    </div>
+
+    <!-- ================= SIDE MENU ================= -->
+    <div class="side-menu" id="sideMenu">
+      <div class="sm-brand">
+        <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+          <polygon style="fill:#94A580;" points="237.53,102.388 239.832,106.378 222.406,136.562 185.824,199.921 122.46,163.339 159.042,99.98 195.624,36.615 197.258,33.78 233.712,95.766 	"/>
+          <polygon style="fill:#7FA661;" points="381.765,91.691 381.692,92.27 371.037,216.288 257.747,163.303 278.84,151.199 247.6,97.055 243.758,90.385 224.333,57.333 190.556,0 300.657,0 304.426,6.524 316.023,26.602 360.672,103.868 381.33,91.907 	"/>
+          <polygon style="fill:#94A580;" points="399.84,334.463 395.234,334.462 377.807,304.278 341.227,240.918 404.59,204.333 441.17,267.694 477.754,331.057 479.393,333.89 407.484,334.467 	"/>
+          <polygon style="fill:#7FA661;" points="336.953,440.363 449.404,440.359 456.943,440.364 512,345.002 407.131,345.844 399.432,345.839 336.947,345.838 336.95,321.5 234.457,393.101 336.958,464.706 	"/>
+          <polygon style="fill:#94A580;" points="120.28,365.191 122.584,361.203 157.437,361.202 230.598,361.204 230.6,434.37 157.438,434.369 84.272,434.37 80.999,434.373 116.454,371.809 	"/>
+          <polygon style="fill:#7FA661;" points="162.941,317.183 141.848,305.006 110.608,359.15 106.767,365.818 59.508,449.318 55.087,457.074 38.416,428.226 24.282,403.801 0,361.688 3.769,355.164 60.016,257.748 38.923,245.644 143.95,196.5 152.213,192.659 	"/>
+        </svg>
+        <h2>Propre<span>237</span></h2>
+      </div>
+      <button class="sm-item" data-page="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Vue d'ensemble</button>
+      <button class="sm-item" data-page="clients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Clients</button>
+      <button class="sm-item" data-page="collecteurs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg>Collecteurs</button>
+      <button class="sm-item" data-page="contrats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Contrats</button>
+      <button class="sm-item" data-page="collectes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Collectes</button>
+      <button class="sm-item" data-page="facturation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Facturation</button>
+      <button class="sm-item" data-page="parametres"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Paramètres</button>
+      <div class="sm-foot">Admin · admin@wastepro.cm</div>
+    </div>
+
+    <!-- ================= BOTTOM SHEET (create/edit) ================= -->
+    <div class="sheet" id="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-head"><button class="cancel" id="sheetCancel">Annuler</button><h3 id="sheetTitle">Nouveau</h3><button class="save" id="sheetSave">OK</button></div>
+      <div class="sheet-body" id="sheetBody"></div>
+    </div>
+
+    <!-- ================= ACTION SHEET (edit/delete d'un item) ================= -->
+    <div class="action-sheet" id="actionSheet">
+      <div class="as-group">
+        <button class="as-btn" id="asEdit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>Modifier</button>
+        <button class="as-btn danger" id="asDelete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>Supprimer</button>
+      </div>
+      <button class="as-cancel" id="asCancel">Annuler</button>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="toast-stack" id="toastStack"></div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"></script>
+<script>
+/* ============================================================
+   MOCK DATA
+============================================================ */
+let uid = 100;
+const nextId = () => 'id' + (uid++);
+
+let frequences = [
+  { id:'fr1', libelle:'Hebdomadaire (1x/semaine)', jours:7 },
+  { id:'fr2', libelle:'Bi-hebdomadaire (2x/semaine)', jours:3 },
+  { id:'fr3', libelle:'Mensuel', jours:30 },
+];
+let clients = [
+  { id:'cl1', name:'Jean Dooh', phone:'+237 677 12 34 56', zone:'Bonanjo', plan:'Standard', status:'Actif' },
+  { id:'cl2', name:'Marie Ekwalla', phone:'+237 690 45 12 78', zone:'Akwa', plan:'Premium', status:'Actif' },
+  { id:'cl3', name:'Samuel Njoya', phone:'+237 655 88 21 09', zone:'Bonapriso', plan:'Essentiel', status:'Suspendu' },
+  { id:'cl4', name:'Aïcha Bello', phone:'+237 699 33 67 41', zone:'Deido', plan:'Standard', status:'Actif' },
+  { id:'cl5', name:'Patrice Fotso', phone:'+237 674 20 15 63', zone:'Bali', plan:'Premium', status:'Actif' },
+  { id:'cl6', name:'Sarah Mbida', phone:'+237 691 77 04 22', zone:'Bonanjo', plan:'Essentiel', status:'Actif' },
+  { id:'cl7', name:'Éric Tchoua', phone:'+237 656 40 88 15', zone:'Ndogbong', plan:'Standard', status:'Suspendu' },
+];
+let collecteurs = [
+  { id:'co1', name:'Paul Mbarga', phone:'+237 678 90 11 22', zone:'Bonanjo / Akwa', rating:4.8, status:'Actif' },
+  { id:'co2', name:'Vincent Onana', phone:'+237 693 55 44 33', zone:'Bonapriso / Bali', rating:4.5, status:'Actif' },
+  { id:'co3', name:'André Kamdem', phone:'+237 657 22 19 88', zone:'Deido', rating:4.2, status:'Inactif' },
+  { id:'co4', name:'Serge Ateba', phone:'+237 690 10 55 40', zone:'Ndogbong', rating:4.9, status:'Actif' },
+];
+let contrats = [
+  { id:'ct1', client:'Jean Dooh', frequence:'Bi-hebdomadaire (2x/semaine)', prix:8000, status:'Actif' },
+  { id:'ct2', client:'Marie Ekwalla', frequence:'Bi-hebdomadaire (2x/semaine)', prix:12000, status:'Actif' },
+  { id:'ct3', client:'Samuel Njoya', frequence:'Hebdomadaire (1x/semaine)', prix:5000, status:'Suspendu' },
+  { id:'ct4', client:'Aïcha Bello', frequence:'Bi-hebdomadaire (2x/semaine)', prix:8000, status:'Actif' },
+  { id:'ct5', client:'Patrice Fotso', frequence:'Bi-hebdomadaire (2x/semaine)', prix:12000, status:'Actif' },
+  { id:'ct6', client:'Éric Tchoua', frequence:'Mensuel', prix:4000, status:'Expiré' },
+];
+let collectes = [
+  { id:'cc1', client:'Jean Dooh', collecteur:'Paul Mbarga', date:'2026-08-04', poids:4.2, status:'Effectué' },
+  { id:'cc2', client:'Marie Ekwalla', collecteur:'Vincent Onana', date:'2026-08-04', poids:5.1, status:'Effectué' },
+  { id:'cc3', client:'Aïcha Bello', collecteur:'Paul Mbarga', date:'2026-08-05', poids:0, status:'Prévu' },
+  { id:'cc4', client:'Patrice Fotso', collecteur:'Vincent Onana', date:'2026-08-05', poids:0, status:'Prévu' },
+  { id:'cc5', client:'Samuel Njoya', collecteur:'André Kamdem', date:'2026-08-01', poids:0, status:'Manqué' },
+  { id:'cc6', client:'Sarah Mbida', collecteur:'Serge Ateba', date:'2026-08-03', poids:3.4, status:'Effectué' },
+];
+let factures = [
+  { id:'fa1', client:'Jean Dooh', montant:8000, echeance:'2026-08-10', status:'Payée' },
+  { id:'fa2', client:'Marie Ekwalla', montant:12000, echeance:'2026-08-12', status:'En attente' },
+  { id:'fa3', client:'Samuel Njoya', montant:5000, echeance:'2026-07-28', status:'En retard' },
+  { id:'fa4', client:'Aïcha Bello', montant:8000, echeance:'2026-08-15', status:'Payée' },
+  { id:'fa5', client:'Patrice Fotso', montant:12000, echeance:'2026-08-14', status:'En attente' },
+];
+const activity = [
+  { color:'#1E9E5A', text:'Ramassage effectué chez Jean Dooh', time:'il y a 12 min' },
+  { color:'#E8A33D', text:'Nouveau client inscrit : Sarah Mbida', time:'il y a 40 min' },
+  { color:'#C1443D', text:'Ramassage manqué chez Samuel Njoya', time:'il y a 1 h' },
+  { color:'#3D6BE8', text:'Paiement reçu de Aïcha Bello — 8 000 XAF', time:'il y a 2 h' },
+];
+
+let currentPage = 'dashboard';
+let currentSearch = '';
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ============================================================
+   HELPERS
+============================================================ */
+const ICON_EDIT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>';
+const BADGE_MAP = {
+  'Actif':'green', 'Effectué':'green', 'Payée':'green',
+  'Suspendu':'red', 'Manqué':'red', 'En retard':'red',
+  'Expiré':'gray', 'Inactif':'gray',
+  'Prévu':'gold', 'En attente':'gold',
+};
+function statusBadge(status){ return `<span class="badge ${BADGE_MAP[status]||'gray'}">${status}</span>`; }
+function initials(name){ return name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase(); }
+function fmtMoney(n){ return n.toLocaleString('fr-FR'); }
+function fmtDate(d){ return new Date(d).toLocaleDateString('fr-FR', {day:'2-digit', month:'short'}); }
+const KEBAB = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>';
+
+function animateList(selector){
+  if (reduceMotion) return;
+  const items = document.querySelectorAll(selector);
+  gsap.fromTo(items, { opacity:0, y:10 }, { opacity:1, y:0, duration:0.32, stagger:0.035, ease:'power2.out' });
+}
+function itemCard(type, id, avatarText, title, subtitle, badgeHtml){
+  return `<div class="item-card">
+    <div class="item-avatar">${avatarText}</div>
+    <div class="item-main"><h5>${title}</h5><p>${subtitle}</p></div>
+    <div class="item-right">${badgeHtml}<button class="kebab" onclick="openActionSheet('${type}','${id}')">${KEBAB}</button></div>
+  </div>`;
+}
+
+/* ============================================================
+   RENDER LISTS
+============================================================ */
+function activeFilter(scope){
+  const btn = document.querySelector(`#chips-${scope} .chip.active`);
+  return btn ? btn.dataset.filter : 'all';
+}
+
+function renderClients(){
+  const filter = activeFilter('clients'); const q = currentSearch;
+  const rows = clients.filter(c => (filter==='all'||c.status===filter) && (!q || c.name.toLowerCase().includes(q) || c.zone.toLowerCase().includes(q)));
+  const el = document.getElementById('clientsList');
+  el.innerHTML = rows.length ? rows.map(c => itemCard('client', c.id, initials(c.name), c.name, `${c.zone} · ${c.plan}`, statusBadge(c.status))).join('')
+    : `<div class="empty-state">Aucun client trouvé</div>`;
+  animateList('#clientsList .item-card');
+}
+function renderCollecteurs(){
+  const filter = activeFilter('collecteurs'); const q = currentSearch;
+  const rows = collecteurs.filter(c => (filter==='all'||c.status===filter) && (!q || c.name.toLowerCase().includes(q) || c.zone.toLowerCase().includes(q)));
+  const el = document.getElementById('collecteursList');
+  el.innerHTML = rows.length ? rows.map(c => itemCard('collecteur', c.id, initials(c.name), c.name, `${c.zone} · ★ ${c.rating.toFixed(1)}`, statusBadge(c.status))).join('')
+    : `<div class="empty-state">Aucun collecteur trouvé</div>`;
+  animateList('#collecteursList .item-card');
+}
+function renderContrats(){
+  const filter = activeFilter('contrats'); const q = currentSearch;
+  const rows = contrats.filter(c => (filter==='all'||c.status===filter) && (!q || c.client.toLowerCase().includes(q)));
+  const el = document.getElementById('contratsList');
+  el.innerHTML = rows.length ? rows.map(c => itemCard('contrat', c.id, initials(c.client), c.client, `${c.frequence} · ${fmtMoney(c.prix)} XAF`, statusBadge(c.status))).join('')
+    : `<div class="empty-state">Aucun contrat trouvé</div>`;
+  animateList('#contratsList .item-card');
+}
+function renderCollectes(){
+  const filter = activeFilter('collectes'); const q = currentSearch;
+  const rows = [...collectes].sort((a,b)=>b.date.localeCompare(a.date)).filter(c => (filter==='all'||c.status===filter) && (!q || c.client.toLowerCase().includes(q)));
+  const el = document.getElementById('collectesList');
+  el.innerHTML = rows.length ? rows.map(c => itemCard('collecte', c.id, initials(c.client), c.client, `${c.collecteur} · ${fmtDate(c.date)}${c.poids?' · '+c.poids+'kg':''}`, statusBadge(c.status))).join('')
+    : `<div class="empty-state">Aucune collecte trouvée</div>`;
+  animateList('#collectesList .item-card');
+}
+function renderFactures(){
+  const filter = activeFilter('factures'); const q = currentSearch;
+  const rows = factures.filter(f => (filter==='all'||f.status===filter) && (!q || f.client.toLowerCase().includes(q)));
+  const el = document.getElementById('facturesList');
+  el.innerHTML = rows.length ? rows.map(f => itemCard('facture', f.id, initials(f.client), f.client, `${fmtMoney(f.montant)} XAF · éch. ${fmtDate(f.echeance)}`, statusBadge(f.status))).join('')
+    : `<div class="empty-state">Aucune facture trouvée</div>`;
+  animateList('#facturesList .item-card');
+}
+function renderFrequences(){
+  document.getElementById('frequencesList').innerHTML = frequences.map(f => `
+    <div class="feed-item">
+      <div class="feed-dot" style="background:var(--gold);"></div>
+      <div class="feed-text" style="flex:1;"><p>${f.libelle}</p><span>Tous les ${f.jours} jours</span></div>
+      <button class="kebab" onclick="openActionSheet('frequence','${f.id}')">${KEBAB}</button>
+    </div>`).join('');
+}
+function renderActivityFeed(){
+  document.getElementById('activityFeed').innerHTML = activity.map(a => `
+    <div class="feed-item"><div class="feed-dot" style="background:${a.color};"></div><div class="feed-text"><p>${a.text}</p><span>${a.time}</span></div></div>`).join('');
+}
+function renderAll(){ renderClients(); renderCollecteurs(); renderContrats(); renderCollectes(); renderFactures(); renderFrequences(); renderActivityFeed(); }
+
+/* ============================================================
+   NAVIGATION — tab bar + menu latéral
+============================================================ */
+const PAGE_META = {
+  dashboard:   { title:"Vue d'ensemble", sub:"Aujourd'hui", fab:null },
+  clients:     { title:'Clients', sub:`${clients.length} enregistrés`, fab:'client' },
+  collecteurs: { title:'Collecteurs', sub:`${collecteurs.length} agents`, fab:'collecteur' },
+  contrats:    { title:'Contrats', sub:`${contrats.length} au total`, fab:'contrat' },
+  collectes:   { title:'Collectes', sub:'Planning & historique', fab:'collecte' },
+  facturation: { title:'Facturation', sub:`${factures.length} factures`, fab:'facture' },
+  parametres:  { title:'Paramètres', sub:'Configuration', fab:null },
+};
+const TAB_PAGES = ['dashboard','clients','collectes','contrats'];
+
+function goToPage(page){
+  currentPage = page; currentSearch = '';
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchRow').classList.remove('open');
+
+  document.querySelectorAll('.tab-item[data-page]').forEach(b => b.classList.toggle('active', b.dataset.page===page));
+  if (!TAB_PAGES.includes(page)) document.getElementById('moreTab').classList.add('active');
+  document.querySelectorAll('.sm-item').forEach(b => b.classList.toggle('active', b.dataset.page===page));
+
+  document.getElementById('pageTitle').textContent = PAGE_META[page].title;
+  document.getElementById('pageSub').textContent = PAGE_META[page].sub;
+  document.getElementById('fabBtn').style.display = PAGE_META[page].fab ? 'flex' : 'none';
+
+  const outgoing = document.querySelector('.page.active');
+  const incoming = document.getElementById('page-'+page);
+  closeSideMenu();
+  if (outgoing === incoming) return;
+
+  if (!reduceMotion) {
+    gsap.to(outgoing, { opacity:0, duration:0.15, onComplete:() => {
+      outgoing.classList.remove('active'); incoming.classList.add('active');
+      gsap.fromTo(incoming, {opacity:0,y:8}, {opacity:1,y:0,duration:0.25,ease:'power2.out'});
+    }});
+  } else { outgoing.classList.remove('active'); incoming.classList.add('active'); }
+}
+document.querySelectorAll('.tab-item[data-page]').forEach(b => b.addEventListener('click', () => goToPage(b.dataset.page)));
+document.querySelectorAll('.sm-item').forEach(b => b.addEventListener('click', () => goToPage(b.dataset.page)));
+
+document.querySelectorAll('.chip-row').forEach(row => {
+  row.addEventListener('click', (e) => {
+    const chip = e.target.closest('.chip'); if (!chip) return;
+    row.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    ({clients:renderClients, collecteurs:renderCollecteurs, contrats:renderContrats, collectes:renderCollectes, factures:renderFactures}[row.id.replace('chips-','')])?.();
+  });
+});
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  currentSearch = e.target.value.trim().toLowerCase();
+  ({dashboard:()=>{}, clients:renderClients, collecteurs:renderCollecteurs, contrats:renderContrats, collectes:renderCollectes, facturation:renderFactures, parametres:()=>{}})[currentPage]?.();
+});
+document.getElementById('searchBtn').addEventListener('click', () => {
+  document.getElementById('searchRow').classList.toggle('open');
+  if (document.getElementById('searchRow').classList.contains('open')) document.getElementById('searchInput').focus();
+});
+
+/* ---- side menu ---- */
+function openSideMenu(){
+  document.getElementById('overlay').classList.add('show');
+  gsap.to('#overlay', { opacity:1, duration:0.2 });
+  gsap.to('#sideMenu', { x:'0%', duration:0.32, ease:'power3.out' });
+}
+function closeSideMenu(){
+  gsap.to('#sideMenu', { x:'-100%', duration:0.28, ease:'power2.in' });
+  if (!isAnySheetOpen()) hideOverlay();
+}
+document.getElementById('menuBtn').addEventListener('click', openSideMenu);
+document.getElementById('moreTab').addEventListener('click', openSideMenu);
+
+function hideOverlay(){ gsap.to('#overlay',{opacity:0,duration:0.2,onComplete:()=>document.getElementById('overlay').classList.remove('show')}); }
+function isAnySheetOpen(){ return false; }
+document.getElementById('overlay').addEventListener('click', () => { closeSideMenu(); closeSheet(); closeActionSheet(); });
+
+/* ============================================================
+   FORM BUILDERS (bottom sheet — créer / éditer)
+============================================================ */
+const FORM_BUILDERS = {
+  client: (d={}) => `
+    <div class="form-field"><label>Nom complet</label><input id="f_name" value="${d.name||''}" placeholder="Ex. Jean Dooh"></div>
+    <div class="form-field"><label>Téléphone</label><input id="f_phone" value="${d.phone||''}" placeholder="+237 6XX XX XX XX"></div>
+    <div class="form-field"><label>Zone / Quartier</label><input id="f_zone" value="${d.zone||''}" placeholder="Ex. Bonanjo"></div>
+    <div class="form-row">
+      <div class="form-field"><label>Formule</label><select id="f_plan">${['Essentiel','Standard','Premium'].map(p=>`<option ${d.plan===p?'selected':''}>${p}</option>`).join('')}</select></div>
+      <div class="form-field"><label>Statut</label><select id="f_status">${['Actif','Suspendu'].map(s=>`<option ${d.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    </div>`,
+  collecteur: (d={}) => `
+    <div class="form-field"><label>Nom complet</label><input id="f_name" value="${d.name||''}" placeholder="Ex. Paul Mbarga"></div>
+    <div class="form-field"><label>Téléphone</label><input id="f_phone" value="${d.phone||''}" placeholder="+237 6XX XX XX XX"></div>
+    <div class="form-field"><label>Zone assignée</label><input id="f_zone" value="${d.zone||''}" placeholder="Ex. Bonanjo / Akwa"></div>
+    <div class="form-row">
+      <div class="form-field"><label>Note</label><input id="f_rating" type="number" step="0.1" min="0" max="5" value="${d.rating!=null?d.rating:'4.5'}"></div>
+      <div class="form-field"><label>Statut</label><select id="f_status">${['Actif','Inactif'].map(s=>`<option ${d.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    </div>`,
+  contrat: (d={}) => `
+    <div class="form-field"><label>Client</label><select id="f_client">${clients.map(c=>`<option ${d.client===c.name?'selected':''}>${c.name}</option>`).join('')}</select></div>
+    <div class="form-field"><label>Fréquence</label><select id="f_frequence">${frequences.map(f=>`<option ${d.frequence===f.libelle?'selected':''}>${f.libelle}</option>`).join('')}</select></div>
+    <div class="form-row">
+      <div class="form-field"><label>Prix / mois (XAF)</label><input id="f_prix" type="number" value="${d.prix||''}" placeholder="8000"></div>
+      <div class="form-field"><label>Statut</label><select id="f_status">${['Actif','Suspendu','Expiré'].map(s=>`<option ${d.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    </div>`,
+  collecte: (d={}) => `
+    <div class="form-field"><label>Client</label><select id="f_client">${clients.map(c=>`<option ${d.client===c.name?'selected':''}>${c.name}</option>`).join('')}</select></div>
+    <div class="form-field"><label>Collecteur</label><select id="f_collecteur">${collecteurs.map(c=>`<option ${d.collecteur===c.name?'selected':''}>${c.name}</option>`).join('')}</select></div>
+    <div class="form-row">
+      <div class="form-field"><label>Date</label><input id="f_date" type="date" value="${d.date||new Date().toISOString().slice(0,10)}"></div>
+      <div class="form-field"><label>Poids (kg)</label><input id="f_poids" type="number" step="0.1" value="${d.poids||''}" placeholder="0"></div>
+    </div>
+    <div class="form-field"><label>Statut</label><select id="f_status">${['Prévu','Effectué','Manqué'].map(s=>`<option ${d.status===s?'selected':''}>${s}</option>`).join('')}</select></div>`,
+  facture: (d={}) => `
+    <div class="form-field"><label>Client</label><select id="f_client">${clients.map(c=>`<option ${d.client===c.name?'selected':''}>${c.name}</option>`).join('')}</select></div>
+    <div class="form-row">
+      <div class="form-field"><label>Montant (XAF)</label><input id="f_montant" type="number" value="${d.montant||''}" placeholder="8000"></div>
+      <div class="form-field"><label>Échéance</label><input id="f_echeance" type="date" value="${d.echeance||''}"></div>
+    </div>
+    <div class="form-field"><label>Statut</label><select id="f_status">${['Payée','En attente','En retard'].map(s=>`<option ${d.status===s?'selected':''}>${s}</option>`).join('')}</select></div>`,
+  frequence: (d={}) => `
+    <div class="form-field"><label>Libellé</label><input id="f_libelle" value="${d.libelle||''}" placeholder="Ex. Hebdomadaire"></div>
+    <div class="form-field"><label>Intervalle (jours)</label><input id="f_jours" type="number" value="${d.jours||''}" placeholder="7"></div>`,
+};
+const ENTITY_META = {
+  client:     { store:()=>clients,     titleNew:'Nouveau client',     titleEdit:'Modifier le client',     render:renderClients },
+  collecteur: { store:()=>collecteurs, titleNew:'Nouveau collecteur', titleEdit:'Modifier le collecteur', render:renderCollecteurs },
+  contrat:    { store:()=>contrats,    titleNew:'Nouveau contrat',    titleEdit:'Modifier le contrat',    render:renderContrats },
+  collecte:   { store:()=>collectes,   titleNew:'Ramassage urgent',   titleEdit:'Modifier la collecte',   render:renderCollectes },
+  facture:    { store:()=>factures,    titleNew:'Nouvelle facture',   titleEdit:'Modifier la facture',    render:renderFactures },
+  frequence:  { store:()=>frequences,  titleNew:'Nouvelle fréquence', titleEdit:'Modifier la fréquence',  render:renderFrequences },
+};
+
+let editCtx = { type:null, id:null };
+let actionCtx = { type:null, id:null };
+
+/* ---- bottom sheet create/edit ---- */
+function openSheet(type, id=null){
+  editCtx = { type, id };
+  const meta = ENTITY_META[type];
+  const data = id ? meta.store().find(x=>x.id===id) : {};
+  document.getElementById('sheetTitle').textContent = id ? meta.titleEdit : meta.titleNew;
+  document.getElementById('sheetBody').innerHTML = FORM_BUILDERS[type](data||{});
+  document.getElementById('overlay').classList.add('show');
+  gsap.to('#overlay', { opacity:1, duration:0.2 });
+  gsap.to('#sheet', { y:'0%', duration:0.38, ease:'power3.out' });
+}
+function closeSheet(){
+  gsap.to('#sheet', { y:'100%', duration:0.3, ease:'power2.in' });
+  hideOverlay();
+}
+document.getElementById('sheetCancel').addEventListener('click', closeSheet);
+document.getElementById('fabBtn').addEventListener('click', () => { const fab = PAGE_META[currentPage].fab; if (fab) openSheet(fab); });
+
+function readForm(type){
+  const v = id => document.getElementById(id)?.value?.trim();
+  switch(type){
+    case 'client': return { name:v('f_name'), phone:v('f_phone'), zone:v('f_zone'), plan:v('f_plan'), status:v('f_status') };
+    case 'collecteur': return { name:v('f_name'), phone:v('f_phone'), zone:v('f_zone'), rating:parseFloat(v('f_rating'))||4.5, status:v('f_status') };
+    case 'contrat': return { client:v('f_client'), frequence:v('f_frequence'), prix:parseInt(v('f_prix'))||0, status:v('f_status') };
+    case 'collecte': return { client:v('f_client'), collecteur:v('f_collecteur'), date:v('f_date'), poids:parseFloat(v('f_poids'))||0, status:v('f_status') };
+    case 'facture': return { client:v('f_client'), montant:parseInt(v('f_montant'))||0, echeance:v('f_echeance'), status:v('f_status') };
+    case 'frequence': return { libelle:v('f_libelle'), jours:parseInt(v('f_jours'))||7 };
+  }
+}
+document.getElementById('sheetSave').addEventListener('click', () => {
+  const { type, id } = editCtx;
+  const values = readForm(type);
+  const meta = ENTITY_META[type];
+  const store = meta.store();
+  if (id) { Object.assign(store.find(x=>x.id===id), values); showToast('Modifications enregistrées.'); }
+  else { store.push({ id:nextId(), ...values }); showToast('Élément créé avec succès.'); }
+  meta.render();
+  if (['contrat','facture','collecte'].includes(type)) renderKPIs();
+  closeSheet();
+});
+
+/* ---- action sheet (edit/delete d'une carte) ---- */
+function openActionSheet(type, id){
+  actionCtx = { type, id };
+  document.getElementById('overlay').classList.add('show');
+  gsap.to('#overlay', { opacity:1, duration:0.2 });
+  gsap.to('#actionSheet', { y:'0%', duration:0.3, ease:'power3.out' });
+}
+function closeActionSheet(){ gsap.to('#actionSheet', { y:'120%', duration:0.25, ease:'power2.in' }); hideOverlay(); }
+document.getElementById('asCancel').addEventListener('click', closeActionSheet);
+document.getElementById('asEdit').addEventListener('click', () => { closeActionSheet(); setTimeout(()=>openSheet(actionCtx.type, actionCtx.id), 260); });
+document.getElementById('asDelete').addEventListener('click', () => {
+  const { type, id } = actionCtx;
+  const meta = ENTITY_META[type];
+  const store = meta.store();
+  const idx = store.findIndex(x=>x.id===id);
+  if (idx>-1) store.splice(idx,1);
+  meta.render();
+  if (['contrat','facture','collecte'].includes(type)) renderKPIs();
+  showToast('Élément supprimé.', 'error');
+  closeActionSheet();
+});
+
+/* ============================================================
+   TOASTS
+============================================================ */
+function showToast(msg, kind='success'){
+  const stack = document.getElementById('toastStack');
+  const el = document.createElement('div');
+  el.className = 'toast' + (kind==='error' ? ' error' : '');
+  el.innerHTML = (kind==='error'
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
+  ) + `<span>${msg}</span>`;
+  stack.appendChild(el);
+  gsap.to(el, { y:0, opacity:1, duration:0.3, ease:'power2.out' });
+  setTimeout(() => gsap.to(el, { y:-20, opacity:0, duration:0.25, onComplete:()=>el.remove() }), 2600);
+}
+
+/* ============================================================
+   KPIs + CHARTS
+============================================================ */
+function countUp(id, target, duration=1.1){
+  const el = document.getElementById(id); if (!el) return;
+  const obj = { val:0 };
+  gsap.to(obj, { val:target, duration, ease:'power2.out', onUpdate:()=>{ el.textContent = Math.round(obj.val).toLocaleString('fr-FR'); } });
+}
+function renderKPIs(){
+  const activeClients = clients.filter(c=>c.status==='Actif').length;
+  const todayCollectes = collectes.filter(c=>c.date==='2026-08-05').length || 12;
+  const revenue = factures.filter(f=>f.status==='Payée').reduce((s,f)=>s+f.montant,0)/1000;
+  const done = collectes.filter(c=>c.status==='Effectué').length;
+  const total = collectes.filter(c=>c.status!=='Prévu').length || 1;
+  countUp('kpiClients', activeClients);
+  countUp('kpiToday', todayCollectes);
+  countUp('kpiRevenue', revenue);
+  countUp('kpiRate', Math.round((done/total)*100));
+}
+function initCharts(){
+  new Chart(document.getElementById('revenueChart'), {
+    type:'line',
+    data:{ labels:['Mar','Avr','Mai','Jun','Jul','Aoû'], datasets:[{ data:[420,460,510,495,545,580], borderColor:'#0F3D2E', backgroundColor:'rgba(15,61,46,0.08)', borderWidth:2.5, fill:true, tension:0.35, pointRadius:0 }] },
+    options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{display:false}, x:{grid:{display:false}, ticks:{color:'#7C8A80', font:{size:10}}} } }
+  });
+  new Chart(document.getElementById('weekChart'), {
+    type:'bar',
+    data:{ labels:['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'], datasets:[{ data:[14,18,11,20,22,9,4], backgroundColor:'#E8A33D', borderRadius:5, maxBarThickness:22 }] },
+    options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{display:false,beginAtZero:true}, x:{grid:{display:false}, ticks:{color:'#7C8A80', font:{size:10}}} } }
+  });
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  renderAll(); renderKPIs(); initCharts();
+  document.getElementById('fabBtn').style.display = 'none';
+});
+</script>
+</body>
+</html>

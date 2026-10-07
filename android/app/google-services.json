@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "107168223474",
+    "project_id": "waste-pro-f67a5",
+    "storage_bucket": "waste-pro-f67a5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:107168223474:android:ff28accac53b102f74c06b",
+        "android_client_info": {
+          "package_name": "com.example.waste_pro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASh4XMhFvQ1h-ZG_gdE-nuuho_2h299os"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

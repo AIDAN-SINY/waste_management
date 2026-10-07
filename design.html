@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WastePro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-dark:#0F3D2E; --bg-darker:#0A2A20;
+    --accent-gold:#E8A33D; --accent-red:#C1443D;
+    --cream:#F5F1E8; --muted:#AEC0B7;
+    --glass:rgba(245,241,232,0.07); --glass-border:rgba(245,241,232,0.16);
+
+    --d-bg:#F6F4EE; --d-surface:#FFFFFF; --d-border:#EAE5D8;
+    --d-text:#182620; --d-muted:#7C8A80; --d-green:#0F3D2E; --d-green-soft:#E7EFE9;
+    --d-gold:#E8A33D; --d-gold-soft:#FBEDD6; --d-red:#C1443D; --d-red-soft:#F8E4E2;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:#DEDBD1;
+    min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    padding:24px;
+  }
+  button{font-family:inherit;}
+
+  /* ---------- phone shell ---------- */
+  .phone{
+    width:390px; height:844px;
+    background:#0A0A0A;
+    border-radius:46px;
+    padding:12px;
+    box-shadow:0 40px 80px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.04);
+    position:relative;
+  }
+  .notch{
+    position:absolute; top:12px; left:50%; transform:translateX(-50%);
+    width:120px; height:26px; background:#0A0A0A; border-radius:0 0 16px 16px;
+    z-index:50;
+  }
+  .phone-screen{
+    width:100%; height:100%;
+    border-radius:36px;
+    overflow:hidden;
+    position:relative;
+    background:var(--bg-darker);
+  }
+  .screen{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column;
+  }
+
+  @media (max-width:460px){
+    body{ padding:0; background:var(--bg-darker); }
+    .phone{ width:100%; height:100vh; height:100dvh; border-radius:0; padding:0; box-shadow:none; }
+    .phone-screen{ border-radius:0; }
+    .notch{ display:none; }
+  }
+
+  /* ================= LOGIN SCREEN ================= */
+  #loginScreen{ color:var(--cream); }
+
+  .bg-mesh{ position:absolute; inset:0; overflow:hidden; z-index:0; }
+  .bg-mesh .blob{ position:absolute; border-radius:50%; filter:blur(50px); opacity:0.55; }
+  .blob-1{ width:280px; height:280px; background:#1C5A41; top:-60px; left:-80px; animation:drift1 16s ease-in-out infinite; }
+  .blob-2{ width:220px; height:220px; background:var(--accent-gold); opacity:0.16; bottom:60px; right:-60px; animation:drift2 20s ease-in-out infinite; }
+  .blob-3{ width:200px; height:200px; background:#0D2E22; top:40%; left:40%; animation:drift1 24s ease-in-out infinite reverse; }
+  @keyframes drift1{ 0%,100%{ transform:translate(0,0); } 50%{ transform:translate(30px,40px); } }
+  @keyframes drift2{ 0%,100%{ transform:translate(0,0); } 50%{ transform:translate(-25px,-30px); } }
+
+  .login-content{
+    position:relative; z-index:2;
+    flex:1; display:flex; flex-direction:column;
+    padding:64px 28px 32px;
+    overflow-y:auto;
+  }
+  .mark{
+    width:56px; height:56px; margin:0 auto 18px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .mark svg{ width:100%; height:100%; }
+  .brand{ text-align:center; font-family:'Sora',sans-serif; font-weight:700; font-size:24px; letter-spacing:-0.02em; }
+  .brand span{ color:var(--accent-gold); }
+  .tagline{ text-align:center; font-size:13px; color:var(--muted); margin-top:4px; margin-bottom:36px; }
+
+  .login-card{
+    background:var(--glass); border:1px solid var(--glass-border);
+    backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+    border-radius:22px; padding:26px 24px 28px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.3);
+  }
+  form{ display:flex; flex-direction:column; gap:16px; }
+  .field label{ display:block; font-size:11.5px; font-weight:500; color:var(--muted); margin-bottom:7px; letter-spacing:0.02em; }
+  .input-wrap{
+    display:flex; align-items:center;
+    background:rgba(10,42,32,0.35); border:1px solid var(--glass-border);
+    border-radius:12px; transition:border-color 0.2s ease, background 0.2s ease; overflow:hidden;
+  }
+  .input-wrap:focus-within{ border-color:var(--accent-gold); background:rgba(10,42,32,0.55); }
+  .prefix{ padding:12px 10px 12px 14px; font-size:14px; color:var(--muted); border-right:1px solid var(--glass-border); }
+  input{ flex:1; background:transparent; border:none; outline:none; color:var(--cream); font-size:14.5px; padding:12px 14px; min-width:0; }
+  input::placeholder{ color:rgba(174,192,183,0.5); }
+  .toggle-eye{ background:none; border:none; cursor:pointer; padding:10px 12px; color:var(--muted); display:flex; }
+  .toggle-eye svg{ width:18px; height:18px; }
+  .row-between{ display:flex; align-items:center; justify-content:space-between; font-size:12px; }
+  .remember{ display:flex; align-items:center; gap:7px; color:var(--muted); }
+  .remember input{ width:14px; height:14px; padding:0; accent-color:var(--accent-gold); flex:none; }
+  .forgot{ color:var(--accent-gold); text-decoration:none; }
+  .submit-btn{
+    margin-top:4px; background:var(--accent-gold); color:#2A1B05; border:none; border-radius:12px;
+    padding:14px; font-family:'Sora',sans-serif; font-weight:600; font-size:14.5px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    transition:transform 0.15s ease, box-shadow 0.2s ease;
+    box-shadow:0 8px 20px rgba(232,163,61,0.25);
+  }
+  .submit-btn:active{ transform:scale(0.98); }
+  .spinner{ width:16px; height:16px; border:2px solid rgba(42,27,5,0.3); border-top-color:#2A1B05; border-radius:50%; display:none; animation:spin 0.7s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .signup-hint{ text-align:center; font-size:12px; color:var(--muted); margin-top:22px; }
+  .signup-hint a{ color:var(--cream); font-weight:500; text-decoration:none; }
+
+  /* ================= DASHBOARD SCREEN ================= */
+  #dashScreen{
+    background:var(--d-bg); color:var(--d-text);
+    transform:translateX(100%);
+  }
+  .dash-scroll{ flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding-bottom:96px; }
+  .dash-scroll::-webkit-scrollbar{ display:none; }
+
+  .dash-header{
+    position:sticky; top:0; z-index:10;
+    background:var(--d-bg);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 20px 12px;
+  }
+  .greet{ display:flex; align-items:center; gap:11px; }
+  .avatar{
+    width:42px; height:42px; border-radius:50%;
+    background:var(--d-green); color:var(--cream);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Sora',sans-serif; font-weight:600; font-size:14px;
+  }
+  .greet-text h2{ font-family:'Sora',sans-serif; font-size:16px; font-weight:600; }
+  .greet-text p{ font-size:11.5px; color:var(--d-muted); margin-top:1px; }
+  .bell{ position:relative; width:38px; height:38px; border-radius:50%; background:var(--d-surface); border:1px solid var(--d-border); display:flex; align-items:center; justify-content:center; }
+  .bell svg{ width:18px; height:18px; color:var(--d-green); }
+  .bell::after{ content:''; position:absolute; top:9px; right:10px; width:6px; height:6px; border-radius:50%; background:var(--d-red); border:1.5px solid var(--d-surface); }
+
+  .dash-section{ padding:6px 20px 0; }
+  .dash-section h3{ font-family:'Sora',sans-serif; font-size:13.5px; font-weight:600; margin:22px 0 12px; display:flex; align-items:center; justify-content:space-between; }
+  .dash-section h3 .see-all{ font-size:11.5px; font-weight:500; color:var(--d-gold); }
+
+  /* signature element: contract card with circular countdown ring */
+  .contract-card{
+    background:var(--d-green); color:var(--cream);
+    border-radius:20px; padding:20px; position:relative; overflow:hidden;
+    display:flex; align-items:center; gap:16px;
+  }
+  .contract-card::before{
+    content:''; position:absolute; width:180px; height:180px; border-radius:50%;
+    background:rgba(232,163,61,0.12); top:-60px; right:-60px;
+  }
+  .ring-wrap{ position:relative; width:76px; height:76px; flex:none; z-index:1; }
+  .ring-wrap svg{ width:100%; height:100%; transform:rotate(-90deg); }
+  .ring-wrap .ring-bg{ fill:none; stroke:rgba(245,241,232,0.15); stroke-width:6; }
+  .ring-wrap .ring-fg{ fill:none; stroke:var(--d-gold); stroke-width:6; stroke-linecap:round; stroke-dasharray:207; stroke-dashoffset:207; }
+  .ring-label{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .ring-label span{ font-family:'Sora',sans-serif; font-size:15px; font-weight:700; }
+  .ring-label small{ font-size:8.5px; color:var(--muted); }
+  .contract-info{ position:relative; z-index:1; flex:1; }
+  .plan-badge{ display:inline-block; font-size:10px; font-weight:600; letter-spacing:0.03em; background:rgba(232,163,61,0.18); color:var(--d-gold); padding:3px 9px; border-radius:20px; margin-bottom:8px; }
+  .contract-info h4{ font-family:'Sora',sans-serif; font-size:15px; font-weight:600; margin-bottom:3px; }
+  .contract-info p{ font-size:11.5px; color:var(--muted); }
+
+  .quick-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  .quick-item{
+    background:var(--d-surface); border:1px solid var(--d-border); border-radius:16px;
+    padding:14px 6px 10px; display:flex; flex-direction:column; align-items:center; gap:8px;
+    cursor:pointer; transition:transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .quick-item:active{ transform:scale(0.94); }
+  .quick-icon{ width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center; }
+  .quick-icon svg{ width:19px; height:19px; }
+  .quick-item span{ font-size:10px; text-align:center; line-height:1.25; color:var(--d-text); font-weight:500; }
+
+  .stat-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .stat-card{ background:var(--d-surface); border:1px solid var(--d-border); border-radius:16px; padding:14px 12px; }
+  .stat-card .stat-val{ font-family:'Sora',sans-serif; font-size:18px; font-weight:700; color:var(--d-green); }
+  .stat-card .stat-label{ font-size:10px; color:var(--d-muted); margin-top:3px; }
+
+  .chart-card{ background:var(--d-surface); border:1px solid var(--d-border); border-radius:18px; padding:18px; }
+  .chart-card-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .chart-card-head h4{ font-size:13px; font-weight:600; }
+  .chart-card-head .tag{ font-size:10px; color:var(--d-muted); }
+
+  .collector-card{
+    background:var(--d-surface); border:1px solid var(--d-border); border-radius:18px; padding:16px;
+    display:flex; align-items:center; gap:12px;
+  }
+  .collector-avatar{ width:48px; height:48px; border-radius:50%; background:var(--d-gold-soft); display:flex; align-items:center; justify-content:center; font-family:'Sora',sans-serif; font-weight:700; color:var(--d-gold); flex:none; }
+  .collector-info{ flex:1; min-width:0; }
+  .collector-info h4{ font-size:13.5px; font-weight:600; }
+  .stars{ font-size:10.5px; color:var(--d-gold); margin-top:2px; }
+  .stars span{ color:var(--d-muted); margin-left:4px; }
+  .status-pill{ display:inline-flex; align-items:center; gap:5px; font-size:10px; font-weight:600; color:#2E8B57; background:#E4F3EA; padding:3px 9px; border-radius:20px; margin-top:6px; }
+  .status-pill .dot{ width:5px; height:5px; border-radius:50%; background:#2E8B57; animation:pulse 1.4s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:0.3; } }
+  .track-btn{ background:var(--d-green); color:var(--cream); border:none; border-radius:10px; padding:9px 14px; font-size:11.5px; font-weight:600; cursor:pointer; flex:none; }
+
+  .collector-card-live{ display:flex; flex-direction:column; gap:14px; }
+  .collector-live-top{ display:flex; align-items:center; gap:10px; }
+  .collector-live-top .status-pill{ margin-left:auto; }
+  .route-strip svg{ width:100%; height:auto; display:block; overflow:visible; }
+  .ping{ transform-origin:10px 18px; animation:radarping 1.8s ease-out infinite; }
+  @keyframes radarping{ 0%{ transform:scale(0.6); opacity:0.5; } 100%{ transform:scale(2.8); opacity:0; } }
+  .collector-live-bottom{ display:flex; align-items:center; justify-content:space-between; font-size:11.5px; color:var(--d-muted); }
+  .collector-live-bottom strong{ color:var(--d-green); font-family:'Sora',sans-serif; font-size:14px; }
+
+  .activity-item{ display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--d-border); }
+  .activity-item:last-child{ border-bottom:none; }
+  .activity-icon{ width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex:none; }
+  .activity-icon svg{ width:16px; height:16px; }
+  .activity-text{ flex:1; min-width:0; }
+  .activity-text h5{ font-size:12.5px; font-weight:600; }
+  .activity-text p{ font-size:10.5px; color:var(--d-muted); margin-top:1px; }
+  .activity-weight{ font-size:11px; font-weight:600; color:var(--d-muted); flex:none; }
+
+  /* bottom nav */
+  .bottom-nav{
+    position:absolute; left:0; right:0; bottom:0; z-index:20;
+    background:rgba(255,255,255,0.9); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border-top:1px solid var(--d-border);
+    display:flex; padding:10px 8px calc(env(safe-area-inset-bottom,0px) + 10px);
+  }
+  .nav-item{ flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; background:none; border:none; cursor:pointer; padding:4px; color:var(--d-muted); }
+  .nav-item svg{ width:20px; height:20px; }
+  .nav-item span{ font-size:9.5px; font-weight:600; }
+  .nav-item.active{ color:var(--d-green); }
+
+  @media (prefers-reduced-motion: reduce){
+    .blob-1,.blob-2,.blob-3{ animation:none; }
+    .status-pill .dot{ animation:none; }
+    .ping{ animation:none; opacity:0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="phone-screen">
+
+    <!-- ========== LOGIN SCREEN ========== -->
+    <div class="screen" id="loginScreen">
+      <div class="bg-mesh"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
+      <div class="login-content">
+        <div class="mark" id="mark">
+          <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+            <polygon style="fill:#94A580;" points="237.53,102.388 239.832,106.378 222.406,136.562 185.824,199.921 122.46,163.339 159.042,99.98 195.624,36.615 197.258,33.78 233.712,95.766 	"/>
+            <polygon style="fill:#7FA661;" points="381.765,91.691 381.692,92.27 371.037,216.288 257.747,163.303 278.84,151.199 247.6,97.055 243.758,90.385 224.333,57.333 190.556,0 300.657,0 304.426,6.524 316.023,26.602 360.672,103.868 381.33,91.907 	"/>
+            <polygon style="fill:#94A580;" points="399.84,334.463 395.234,334.462 377.807,304.278 341.227,240.918 404.59,204.333 441.17,267.694 477.754,331.057 479.393,333.89 407.484,334.467 	"/>
+            <polygon style="fill:#7FA661;" points="336.953,440.363 449.404,440.359 456.943,440.364 512,345.002 407.131,345.844 399.432,345.839 336.947,345.838 336.95,321.5 234.457,393.101 336.958,464.706 	"/>
+            <polygon style="fill:#94A580;" points="120.28,365.191 122.584,361.203 157.437,361.202 230.598,361.204 230.6,434.37 157.438,434.369 84.272,434.37 80.999,434.373 116.454,371.809 	"/>
+            <polygon style="fill:#7FA661;" points="162.941,317.183 141.848,305.006 110.608,359.15 106.767,365.818 59.508,449.318 55.087,457.074 38.416,428.226 24.282,403.801 0,361.688 3.769,355.164 60.016,257.748 38.923,245.644 143.95,196.5 152.213,192.659 	"/>
+          </svg>
+        </div>
+        <h1 class="brand">Waste<span>Pro</span></h1>
+        <p class="tagline">Ramassage d'ordures simplifié</p>
+
+        <div class="login-card">
+          <form id="loginForm">
+            <div class="field">
+              <label for="phone">Numéro de téléphone</label>
+              <div class="input-wrap">
+                <span class="prefix">+237</span>
+                <input id="phone" type="tel" inputmode="numeric" placeholder="6 XX XX XX XX" autocomplete="tel" required>
+              </div>
+            </div>
+            <div class="field">
+              <label for="password">Mot de passe</label>
+              <div class="input-wrap">
+                <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" required>
+                <button type="button" class="toggle-eye" id="toggleEye" aria-label="Afficher le mot de passe">
+                  <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="row-between">
+              <label class="remember"><input type="checkbox">Se souvenir de moi</label>
+              <a href="#" class="forgot">Mot de passe oublié ?</a>
+            </div>
+            <button type="submit" class="submit-btn" id="submitBtn">
+              <span class="spinner" id="spinner"></span>
+              <span id="submitLabel">Se connecter</span>
+            </button>
+          </form>
+          <p class="signup-hint">Pas encore de compte ? <a href="#">Créer un compte</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== DASHBOARD SCREEN ========== -->
+    <div class="screen" id="dashScreen">
+      <div class="dash-scroll">
+
+        <div class="dash-header">
+          <div class="greet">
+            <div class="avatar">JD</div>
+            <div class="greet-text"><h2>Bonjour, Jean 👋</h2><p>Bonanjo, Douala</p></div>
+          </div>
+          <button class="bell" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </button>
+        </div>
+
+        <div class="dash-section">
+          <div class="contract-card">
+            <div class="ring-wrap">
+              <svg viewBox="0 0 76 76"><circle class="ring-bg" cx="38" cy="38" r="33"/><circle class="ring-fg" id="ringFg" cx="38" cy="38" r="33"/></svg>
+              <div class="ring-label"><span><span id="ringHours">0</span>h</span><small>restantes</small></div>
+            </div>
+            <div class="contract-info">
+              <span class="plan-badge">FORMULE STANDARD · 2x/SEM.</span>
+              <h4>Prochain ramassage</h4>
+              <p>Demain · 07:00 — Rue 1.234, Bonanjo</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-section">
+          <h3>Accès rapide</h3>
+          <div class="quick-grid">
+            <div class="quick-item">
+              <div class="quick-icon" style="background:var(--d-red-soft);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--d-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </div>
+              <span>Signaler un problème</span>
+            </div>
+            <div class="quick-item">
+              <div class="quick-icon" style="background:var(--d-gold-soft);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--d-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+              <span>Ramassage supp.</span>
+            </div>
+            <div class="quick-item">
+              <div class="quick-icon" style="background:var(--d-green-soft);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--d-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+              </div>
+              <span>Ma facture</span>
+            </div>
+            <div class="quick-item">
+              <div class="quick-icon" style="background:#E7EEFB;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#3D6BE8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+              </div>
+              <span>Support</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-section">
+          <h3>Ce mois-ci</h3>
+          <div class="stat-row">
+            <div class="stat-card"><div class="stat-val"><span id="statKg">0</span><span style="font-size:11px;">kg</span></div><div class="stat-label">Collectés</div></div>
+            <div class="stat-card"><div class="stat-val"><span id="statRate">0</span><span style="font-size:11px;">%</span></div><div class="stat-label">Taux recyclage</div></div>
+            <div class="stat-card"><div class="stat-val"><span id="statCo2">0</span><span style="font-size:11px;">kg</span></div><div class="stat-label">CO₂ évité</div></div>
+          </div>
+        </div>
+
+        <div class="dash-section">
+          <h3>Suivi<span class="see-all">Détails</span></h3>
+          <div class="chart-card" style="margin-bottom:12px;">
+            <div class="chart-card-head"><h4>Déchets collectés</h4><span class="tag">6 derniers mois</span></div>
+            <canvas id="barChart" height="140"></canvas>
+          </div>
+
+          <div class="chart-card collector-card-live">
+            <div class="collector-live-top">
+              <div class="collector-avatar">PM</div>
+              <div class="collector-info">
+                <h4>Paul Mbarga</h4>
+                <div class="stars">★★★★★ <span>4.8</span></div>
+              </div>
+              <span class="status-pill"><span class="dot"></span>En route</span>
+            </div>
+
+            <div class="route-strip">
+              <svg viewBox="0 0 300 36" preserveAspectRatio="none">
+                <line x1="10" y1="18" x2="290" y2="18" stroke="var(--d-border)" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="10" cy="18" r="5" fill="var(--d-green)"/>
+                <circle cx="290" cy="18" r="7" fill="var(--d-gold-soft)" stroke="var(--d-gold)" stroke-width="2"/>
+                <g id="truckMarker">
+                  <circle class="ping" cx="10" cy="18" r="9" fill="var(--d-gold)" opacity="0.35"/>
+                  <circle cx="10" cy="18" r="6" fill="var(--d-gold)"/>
+                </g>
+              </svg>
+            </div>
+
+            <div class="collector-live-bottom">
+              <span><strong id="etaValue">15</strong> min · arrivée estimée</span>
+              <button class="track-btn">Suivre</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-section">
+          <h3>Activité récente<span class="see-all">Tout voir</span></h3>
+          <div class="chart-card">
+            <div class="activity-item">
+              <div class="activity-icon" style="background:var(--d-green-soft);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--d-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="activity-text"><h5>Ramassage effectué</h5><p>Lun. 28 juillet · 07:12</p></div>
+              <span class="activity-weight">4.2 kg</span>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon" style="background:var(--d-green-soft);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--d-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="activity-text"><h5>Ramassage effectué</h5><p>Ven. 25 juillet · 07:05</p></div>
+              <span class="activity-weight">3.8 kg</span>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon" style="background:var(--d-red-soft);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--d-red)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </div>
+              <div class="activity-text"><h5>Ramassage manqué</h5><p>Lun. 21 juillet · reporté</p></div>
+              <span class="activity-weight">—</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="bottom-nav">
+        <button class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Accueil</span></button>
+        <button class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Historique</span></button>
+        <button class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Facture</span></button>
+        <button class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profil</span></button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"></script>
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* login entrance */
+  if (!reduceMotion) {
+    gsap.set('.mark, .brand, .tagline, .login-card, .signup-hint', { opacity: 0, y: 14 });
+    gsap.timeline({ defaults: { ease: 'power2.out' } })
+      .to('.mark', { opacity: 1, y: 0, duration: 0.5 })
+      .to('.brand', { opacity: 1, y: 0, duration: 0.4 }, '-=0.2')
+      .to('.tagline', { opacity: 1, y: 0, duration: 0.4 }, '-=0.25')
+      .to('.login-card', { opacity: 1, y: 0, duration: 0.5 }, '-=0.2')
+      .to('.signup-hint', { opacity: 1, y: 0, duration: 0.35 }, '-=0.2');
+    gsap.to('#mark', { scale: 1.06, duration: 2.4, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+    gsap.to('#mark svg', { rotate: 360, duration: 26, ease: 'none', repeat: -1, transformOrigin: '50% 50%' });
+  } else {
+    gsap.set('.mark, .brand, .tagline, .login-card, .signup-hint', { opacity: 1, y: 0 });
+  }
+
+  /* password toggle */
+  const pwd = document.getElementById('password');
+  const eyeIcon = document.getElementById('eyeIcon');
+  const eyeOpen = '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>';
+  const eyeClosed = '<path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.6 21.6 0 0 1 5.06-6.06M9.9 4.24A10.4 10.4 0 0 1 12 4c7 0 11 8 11 8a21.6 21.6 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  document.getElementById('toggleEye').addEventListener('click', () => {
+    const show = pwd.type === 'password';
+    pwd.type = show ? 'text' : 'password';
+    eyeIcon.innerHTML = show ? eyeClosed : eyeOpen;
+  });
+
+  /* charts — init once, on first dashboard reveal */
+  let chartsReady = false;
+  function initCharts(){
+    if (chartsReady) return;
+    chartsReady = true;
+
+    new Chart(document.getElementById('barChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul'],
+        datasets: [{ data: [18, 22, 19, 25, 21, 24], backgroundColor: '#0F3D2E', borderRadius: 5, maxBarThickness: 22 }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => c.raw + ' kg' } } },
+        scales: {
+          y: { display: false, beginAtZero: true },
+          x: { grid: { display: false }, ticks: { color: '#7C8A80', font: { size: 10 } } }
+        }
+      }
+    });
+  }
+
+  /* count a number up from 0, used to make the dashboard feel alive on arrival */
+  function countUp(id, target, duration = 1.2) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const obj = { val: 0 };
+    gsap.to(obj, { val: target, duration, ease: 'power2.out', onUpdate: () => { el.textContent = Math.round(obj.val); } });
+  }
+
+  /* staggered entrance + live cues, played once the dashboard becomes visible */
+  function revealDashboard(){
+    gsap.to('#ringFg', { strokeDashoffset: 207 * (1 - 18 / 48), duration: 1.1, ease: 'power2.out' });
+    countUp('ringHours', 18, 1.1);
+    countUp('statKg', 24);
+    countUp('statRate', 68);
+    countUp('statCo2', 12);
+
+    gsap.set('.contract-card, .quick-item, .stat-card, .chart-card, .activity-item', { opacity: 0, y: 14 });
+    gsap.timeline({ defaults: { ease: 'power2.out' } })
+      .to('.contract-card', { opacity: 1, y: 0, duration: 0.5 })
+      .to('.quick-item', { opacity: 1, y: 0, duration: 0.35, stagger: 0.06 }, '-=0.25')
+      .to('.stat-card', { opacity: 1, y: 0, duration: 0.35, stagger: 0.08 }, '-=0.2')
+      .to('.chart-card', { opacity: 1, y: 0, duration: 0.4, stagger: 0.12 }, '-=0.15')
+      .to('.activity-item', { opacity: 1, y: 0, duration: 0.3, stagger: 0.07 }, '-=0.1');
+
+    gsap.to('#truckMarker', { x: 280, duration: 5, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 0.7 });
+  }
+
+  /* login -> dashboard transition */
+  document.getElementById('loginForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    document.getElementById('spinner').style.display = 'inline-block';
+    document.getElementById('submitLabel').textContent = 'Connexion...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      const login = document.getElementById('loginScreen');
+      const dash = document.getElementById('dashScreen');
+      if (!reduceMotion) {
+        gsap.to(login, { xPercent: -100, duration: 0.5, ease: 'power2.inOut' });
+        gsap.to(dash, { x: '0%', duration: 0.5, ease: 'power2.inOut', onComplete: () => {
+          initCharts();
+          revealDashboard();
+        }});
+      } else {
+        login.style.display = 'none';
+        dash.style.transform = 'translateX(0)';
+        initCharts();
+        gsap.set('#ringFg', { strokeDashoffset: 207 * (1 - 18 / 48) });
+        document.getElementById('ringHours').textContent = 18;
+        document.getElementById('statKg').textContent = 24;
+        document.getElementById('statRate').textContent = 68;
+        document.getElementById('statCo2').textContent = 12;
+        gsap.set('#truckMarker', { x: 140 });
+      }
+    }, 900);
+  });
+
+  /* bottom nav visual state only (mockup) */
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

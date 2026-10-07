@@ -1,0 +1,546 @@
+rules_version = '2';
+
+// ============================================================
+// WastePro — Firestore rules (project: waste-pro-f67a5)
+// ------------------------------------------------------------
+// Identity: every session is Firebase Auth (email derived from the phone,
+// `2376XXXXXXXX@wastepro.cm`). The role and scope come from
+// `auth_profiles/{uid}` — written only by staff (or by the applicant for
+// their own `pending_client` profile), so nobody can promote themselves.
+//
+// Roles:
+//   staff  = super_admin | general_admin | agency_manager  (consoles)
+//   field  = client | collector                            (mobile app)
+//   pending_client = applicant awaiting approval
+//
+// Money: `transactions`, `subscriptions` and paid contracts / invoices /
+// extra pickups are written by Cloud Functions only (Admin SDK bypasses
+// these rules) — see functions/index.js.
+//
+// Tests: tool/rules-test (Firestore emulator).
+//
+// Passwords: never stored in Firestore (writes carrying a `password` field
+// are refused); consoles manage logins through the `manageAccount` function.
+//
+// Tenant scope: staff only reach their company / agency (`inScope`);
+// clients only their own records; collectors their agency.
+// ============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- Identity helpers ----------
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function profilePath() {
+      return /databases/$(database)/documents/auth_profiles/$(request.auth.uid);
+    }
+
+    function profile() {
+      return signedIn() && exists(profilePath())
+        ? get(profilePath()).data
+        : {};
+    }
+
+    // Role of profile [p].
+    function roleOf(p) {
+      return p.get('role', '');
+    }
+
+    function myRole() {
+      return roleOf(profile());
+    }
+
+    function myPhone() {
+      return profile().get('phone', '');
+    }
+
+    function mySociete() {
+      return profile().get('societeId', '');
+    }
+
+    function myAgence() {
+      return profile().get('agenceId', '');
+    }
+
+    // ---------- Tenant scope ----------
+    // Staff only see / change data of their tenant: super admin = all,
+    // general admin = own company (`societeId`), agency manager = own
+    // agency (`agenceId`). Queries must filter on that field (the
+    // backoffice / company console do).
+    function inScopeOf(p, data) {
+      let role = roleOf(p);
+      let societe = p.get('societeId', '');
+      let agence = p.get('agenceId', '');
+      return role == 'super_admin'
+        || (role == 'general_admin' && societe != ''
+            && data.get('societeId', '') == societe)
+        || (role == 'agency_manager' && agence != ''
+            && data.get('agenceId', '') == agence);
+    }
+
+    function inScope(data) {
+      return inScopeOf(profile(), data);
+    }
+
+    function staffCanRead() {
+      return inScope(resource.data);
+    }
+
+    function staffCanCreate() {
+      return inScope(request.resource.data);
+    }
+
+    function staffCanUpdate() {
+      return inScope(resource.data) && inScope(request.resource.data);
+    }
+
+    // Field user of the same agency as the document (collector tours,
+    // a client's own collector).
+    function sameAgency(data) {
+      return isField() && myAgence() != ''
+        && data.get('agenceId', '') == myAgence();
+    }
+
+    // Collector doc id of the signed-in collector (pickups' `collector_id`).
+    function myCollecteurId() {
+      return myPhone() != ''
+          && exists(/databases/$(database)/documents/users/$(myPhone()))
+        ? get(/databases/$(database)/documents/users/$(myPhone()))
+            .data.get('collecteurId', '')
+        : '';
+    }
+
+    function isSuper() {
+      return myRole() == 'super_admin';
+    }
+
+    function isGeneralAdmin() {
+      return myRole() == 'general_admin';
+    }
+
+    function isStaff() {
+      return myRole() in ['super_admin', 'general_admin', 'agency_manager'];
+    }
+
+    function isClient() {
+      return myRole() == 'client';
+    }
+
+    function isCollector() {
+      return myRole() == 'collector';
+    }
+
+    function isField() {
+      return myRole() in ['client', 'collector'];
+    }
+
+    // Active account (staff or field) — excludes pending applicants.
+    function isMember() {
+      return isStaff() || isField();
+    }
+
+    // The signed-in Auth account is the one derived from [phone]
+    // (canonical `+237…` key, or a legacy bare `6XXXXXXXX` key).
+    function ownsPhone(phone) {
+      return signedIn()
+        && request.auth.token.email is string
+        && (request.auth.token.email == phone.replace('[+]', '') + '@wastepro.cm'
+            || request.auth.token.email == '237' + phone + '@wastepro.cm');
+    }
+
+    // Roles the caller may create / edit / delete (no self-promotion
+    // above one's own tier).
+    function manageableRoles() {
+      return isSuper()
+        ? ['super_admin', 'general_admin', 'agency_manager', 'client',
+           'collector', 'pending_client', '']
+        : isGeneralAdmin()
+          ? ['general_admin', 'agency_manager', 'client', 'collector',
+             'pending_client', '']
+          : myRole() == 'agency_manager'
+            ? ['client', 'collector', 'pending_client', '']
+            : [];
+    }
+
+    function canManage(role) {
+      return isStaff() && role in manageableRoles();
+    }
+
+    function changedKeys() {
+      return request.resource.data.diff(resource.data).affectedKeys();
+    }
+
+    // Passwords live in Firebase Auth only (see `manageAccount`).
+    function noPassword() {
+      return !('password' in request.resource.data);
+    }
+
+    // ---------- Accounts ----------
+
+    // Role + scope consulted by every rule above.
+    match /auth_profiles/{uid} {
+      allow get: if (signedIn() && request.auth.uid == uid) || isStaff();
+      allow list: if isSuper();
+
+      allow create: if canManage(request.resource.data.get('role', ''))
+        // Applicant creating their own profile (pre-registration).
+        || (signedIn() && request.auth.uid == uid
+            && request.resource.data.role == 'pending_client'
+            && ownsPhone(request.resource.data.phone));
+
+      allow update: if (canManage(resource.data.get('role', ''))
+                        && canManage(request.resource.data.get('role', '')))
+        // Applicant re-applying after a rejection: stays pending.
+        || (signedIn() && request.auth.uid == uid
+            && resource.data.role == 'pending_client'
+            && request.resource.data.role == 'pending_client'
+            && request.resource.data.phone == resource.data.phone);
+
+      allow delete: if canManage(resource.data.get('role', ''));
+    }
+
+    // Login profile `users/{phone}` (read by the app for routing / UI).
+    // Staff read any login profile (phone availability checks across
+    // agencies, approvals); a collector those of their agency (tour); a
+    // client only their own.
+    match /users/{phone} {
+      allow get: if ownsPhone(phone) || isStaff()
+        || (isCollector() && sameAgency(resource.data));
+      allow list: if isStaff();
+
+      allow create: if noPassword()
+        && (canManage(request.resource.data.get('role', ''))
+            || (ownsPhone(phone)
+                && request.resource.data.role == 'pending_client'
+                && request.resource.data.uid == request.auth.uid));
+
+      allow update: if noPassword() && (
+          (canManage(resource.data.get('role', ''))
+           && canManage(request.resource.data.get('role', '')))
+        || (ownsPhone(phone) && ownProfileUpdate())
+        // Pickup bookkeeping across accounts (collector ↔ client).
+        || (isField() && !ownsPhone(phone)
+            && changedKeys().hasOnly([
+                 'needsPickup', 'lastCollection', 'lastCollectedClient',
+                 'lastCollectionAt', 'earnings', 'successPickups',
+                 'currentUrgentClient', 'urgentAssignedAt',
+                 'assignedCollector', 'urgentPickupRequestedAt',
+               ])));
+
+      allow delete: if canManage(resource.data.get('role', ''));
+    }
+
+    // What a user may change on their own login profile: never their
+    // role / identity, nor what is granted by a payment or by the agency.
+    // A subscription can only be switched OFF (contract expiry).
+    function ownProfileUpdate() {
+      return !changedKeys().hasAny([
+          'role', 'uid', 'phoneNumber', 'consoleCreated', 'consoleUserId',
+          'collecteurId', 'subscription_plan', 'collection_days',
+          'pickup_time', 'zone_name', 'last_subscription_at',
+          'subscription_end', 'next_plan',
+        ])
+        && (!changedKeys().hasAny(['societeId', 'agenceId', 'agenceName'])
+            || resource.data.get('role', '') == 'pending_client')
+        && (!changedKeys().hasAny(['isSubscribed', 'active_contract_id'])
+            || (request.resource.data.get('isSubscribed', false) == false
+                && !('active_contract_id' in request.resource.data)));
+    }
+
+    // Applications (pre-registration). Legacy applications typed the
+    // agency NAME (empty agenceId): the agency manager also sees those
+    // addressed to their agency's `ville`.
+    function agenceVille(agence) {
+      return agence != ''
+          && exists(/databases/$(database)/documents/agences/$(agence))
+        ? get(/databases/$(database)/documents/agences/$(agence))
+            .data.get('ville', '')
+        : '';
+    }
+
+    function registrationInScope(data) {
+      let p = profile();
+      return inScopeOf(p, data)
+        || (roleOf(p) == 'agency_manager'
+            && data.get('agenceId', '') == ''
+            && data.get('agenceName', '') != ''
+            && data.get('agenceName', '') == agenceVille(p.get('agenceId', '')));
+    }
+
+    match /registrations/{id} {
+      allow read: if registrationInScope(resource.data)
+        || resource.data.phone == myPhone()
+        || ownsPhone(resource.data.phone);
+      allow create: if noPassword() && (staffCanCreate()
+        || (ownsPhone(request.resource.data.phone)
+            && request.resource.data.status == 'pending'));
+      allow update: if noPassword() && registrationInScope(resource.data)
+        && registrationInScope(request.resource.data);
+      allow delete: if registrationInScope(resource.data);
+    }
+
+    // Per-agency settings (auto-approval of applications, collector
+    // capacity) — edited by the agency's manager, applied by the
+    // `autoApproveRegistration` function.
+    match /agency_settings/{agenceId} {
+      allow read: if isSuper()
+        || (myRole() == 'agency_manager' && agenceId == myAgence())
+        || (isGeneralAdmin() && resource.data.get('societeId', '') == mySociete());
+      allow write: if isSuper()
+        || (myRole() == 'agency_manager' && agenceId == myAgence()
+            && request.resource.data.get('agenceId', '') == agenceId);
+    }
+
+    // Collector pre-approval whitelist.
+    match /collectors/{phone} {
+      allow read, write: if isStaff();
+    }
+
+    // ---------- Platform (super admin / general admin) ----------
+
+    match /societes/{id} {
+      allow read: if isStaff();
+      allow create, delete: if isSuper();
+      allow update: if isSuper() || (isGeneralAdmin() && id == mySociete());
+    }
+
+    // Public directory: pre-registration lists agencies before sign-in.
+    match /agences/{id} {
+      allow read: if true;
+      allow create, update: if isSuper()
+        || (isGeneralAdmin()
+            && request.resource.data.get('societeId', '') == mySociete());
+      allow delete: if isSuper()
+        || (isGeneralAdmin() && resource.data.get('societeId', '') == mySociete());
+    }
+
+    // Console accounts.
+    match /utilisateurs/{id} {
+      allow read: if isSuper()
+        || (isGeneralAdmin()
+            && resource.data.get('societeId', '') == mySociete());
+      allow create, update: if noPassword() && (isSuper()
+        || (isGeneralAdmin()
+            && request.resource.data.get('societeId', '') == mySociete()));
+      allow delete: if isSuper()
+        || (isGeneralAdmin() && resource.data.get('societeId', '') == mySociete());
+    }
+
+    // ---------- Money (written by Cloud Functions only) ----------
+
+    match /transactions/{id} {
+      allow read: if staffCanRead()
+        || (isField() && (resource.data.phone == myPhone()
+                          || resource.data.userId == myPhone()));
+      allow write: if false;
+    }
+
+    match /subscriptions/{phone} {
+      allow get: if isSuper() || ownsPhone(phone);
+      allow list: if isSuper();
+      allow write: if false;
+    }
+
+    // Client contracts: created by the payment function, expired by the
+    // daily `contractExpiry` function.
+    match /contracts/{id} {
+      allow read: if isSuper()
+        || (isClient() && resource.data.client_id == myPhone());
+      allow create: if false;
+      allow update, delete: if isSuper();
+    }
+
+    match /factures/{id} {
+      allow read: if staffCanRead()
+        || (isClient() && resource.data.clientId == myPhone());
+      allow create: if staffCanCreate();
+      allow update: if staffCanUpdate();
+      allow delete: if staffCanRead();
+    }
+
+    match /webhook_events/{id} {
+      allow read: if isSuper();
+      allow write: if false;
+    }
+
+    // ---------- Operations ----------
+
+    // A client reads only their own record; a collector those of their
+    // agency (tour); staff their tenant.
+    match /clients/{id} {
+      allow read: if staffCanRead()
+        || (isClient() && resource.data.get('phone', '') == myPhone())
+        || (isCollector() && sameAgency(resource.data));
+      allow create: if staffCanCreate() && noPassword();
+      allow delete: if staffCanRead();
+      allow update: if (staffCanUpdate() && noPassword())
+        || (isClient() && resource.data.get('phone', '') == myPhone()
+            && changedKeys().hasOnly(['latitude', 'longitude']));
+    }
+
+    match /collecteurs/{id} {
+      // A client reads their agency's collectors (their own collector's
+      // card + live position); a collector their agency's.
+      allow read: if staffCanRead() || sameAgency(resource.data);
+      allow create: if staffCanCreate() && noPassword();
+      allow delete: if staffCanRead();
+      // Collectors publish their live position.
+      allow update: if (staffCanUpdate() && noPassword())
+        || (isCollector() && sameAgency(resource.data)
+            && changedKeys().hasOnly([
+              'latitude', 'longitude', 'heading', 'speed', 'accuracy',
+              'lastPositionUpdate', 'isTracking',
+            ]));
+    }
+
+    // Collection calendars / collector-zone plans (no personal data).
+    match /zones/{id} {
+      allow read: if isMember();
+      allow create: if staffCanCreate();
+      allow update: if staffCanUpdate();
+      allow delete: if staffCanRead();
+    }
+
+    match /assignments/{id} {
+      allow read: if isMember();
+      allow create: if staffCanCreate();
+      allow update: if staffCanUpdate();
+      allow delete: if staffCanRead();
+    }
+
+    // Pickups: collectors record / clients confirm. Only the payment
+    // function may create a `paid` (extra) pickup. `agenceId` /
+    // `societeId` are stamped by the `stampPickupScope` function.
+    function collectorOwnsPickup(data) {
+      return isCollector()
+        && (sameAgency(data)
+            || (data.get('collector_id', '') != ''
+                && data.get('collector_id', '') in [myPhone(), myCollecteurId()]));
+    }
+
+    match /pickups/{id} {
+      allow read: if staffCanRead()
+        || (isClient() && resource.data.get('client_id', '') == myPhone())
+        || collectorOwnsPickup(resource.data);
+      allow create: if staffCanCreate()
+        || (isClient()
+            && request.resource.data.get('client_id', '') == myPhone()
+            && request.resource.data.get('status', '') != 'paid')
+        || (isCollector()
+            && request.resource.data.get('status', '') != 'paid');
+      allow update: if staffCanUpdate()
+        || (((isClient()
+              && resource.data.get('client_id', '') == myPhone())
+             || collectorOwnsPickup(resource.data))
+            && (request.resource.data.get('status', '') != 'paid'
+                || resource.data.get('status', '') == 'paid'));
+      allow delete: if staffCanRead();
+    }
+
+    // Issues: the manager assigns them to a collector, who then reads
+    // them and moves them forward (assigned → in_progress → resolved).
+    function assignedToMe(issue) {
+      return isCollector()
+        && issue.get('assignedCollectorPhone', '') == myPhone();
+    }
+    match /issues/{id} {
+      allow read: if staffCanRead()
+        || (isField() && resource.data.get('client_id', '') == myPhone())
+        || assignedToMe(resource.data);
+      allow create: if isMember();
+      allow update: if staffCanUpdate()
+        || (assignedToMe(resource.data)
+            && changedKeys().hasOnly(['status', 'startedAt', 'resolvedAt',
+                                      'resolutionNote'])
+            && request.resource.data.status in ['in_progress', 'resolved']);
+      allow delete: if staffCanRead();
+    }
+
+    // In-app notifications (bell). Written by the `notify` / payment /
+    // expiry functions and by the backoffice (application decisions) —
+    // never by one app user for another.
+    match /notifications/{id} {
+      allow read: if isSuper() || resource.data.phone == myPhone();
+      allow create: if isStaff();
+      allow update: if isSuper()
+        || (resource.data.phone == myPhone()
+            && changedKeys().hasOnly(['read']));
+      allow delete: if isSuper();
+    }
+
+    // Backoffice data (tenant-scoped).
+    match /contrats/{id} {
+      allow read, delete: if staffCanRead();
+      allow create: if staffCanCreate();
+      allow update: if staffCanUpdate();
+    }
+
+    match /collectes/{id} {
+      allow read, delete: if staffCanRead();
+      allow create: if staffCanCreate();
+      allow update: if staffCanUpdate();
+    }
+
+    // Shared reference data (frequency tiers).
+    match /frequences/{id} {
+      allow read, write: if isStaff();
+    }
+
+    match /vehicles/{id} {
+      allow read, delete: if staffCanRead();
+      allow create: if staffCanCreate();
+      allow update: if staffCanUpdate();
+    }
+
+    match /vehicle_maintenance/{id} {
+      allow read, delete: if staffCanRead();
+      allow create: if staffCanCreate();
+      allow update: if staffCanUpdate();
+    }
+
+    match /invoices/{id} {
+      allow read, write: if isStaff();
+    }
+
+    match /app_config/{doc} {
+      allow read: if signedIn();
+      allow write: if isStaff();
+    }
+
+    // ---------- Server-only collections ----------
+    // Legacy outbox / logs (messages are now sent by the functions) and the
+    // chatbot quota.
+    match /push_notifications/{id} {
+      allow read: if isSuper();
+      allow write: if false;
+    }
+
+    match /sms_logs/{id} {
+      allow read: if isSuper();
+      allow write: if false;
+    }
+
+    match /email_logs/{id} {
+      allow read: if isSuper();
+      allow write: if false;
+    }
+
+    match /whatsapp_logs/{id} {
+      allow read: if isSuper();
+      allow write: if false;
+    }
+
+    match /chatbot_usage/{uid} {
+      allow read, write: if false;
+    }
+
+    // Password reset codes (hashed) — `passwordReset*` functions only.
+    match /password_resets/{phone} {
+      allow read, write: if false;
+    }
+  }
+}

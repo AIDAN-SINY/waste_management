@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WastePro — Platform Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<style>
+  :root{
+    --ink:#12151A; --ink-soft:#1B2027; --ink-line:rgba(245,241,232,0.09);
+    --gold:#E8A33D; --gold-soft:#FBEDD6; --gold-dim:#B4740E;
+    --green:#1E9E5A; --green-soft:#E5F5EC;
+    --red:#C1443D; --red-soft:#F8E4E2;
+    --blue:#3D6BE8; --blue-soft:#E7EEFB;
+    --cream:#F5F1E8;
+    --bg:#F6F5F2; --surface:#FFFFFF; --border:#E7E5DE;
+    --text:#181A1D; --muted:#84868C;
+    --sidebar-w:248px; --sidebar-w-collapsed:76px;
+    --radius:14px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; }
+  h1,h2,h3,h4{ font-family:'Sora',sans-serif; }
+  button{ font-family:inherit; cursor:pointer; }
+  ::selection{ background:var(--gold-soft); }
+  :focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+
+  .app{ display:flex; min-height:100vh; }
+
+  /* ---------- sidebar ---------- */
+  .sidebar{
+    width:var(--sidebar-w); flex:none; background:var(--ink); color:var(--cream);
+    display:flex; flex-direction:column; position:sticky; top:0; height:100vh; z-index:30;
+    transition:width 0.25s ease;
+  }
+  .sidebar.collapsed{ width:var(--sidebar-w-collapsed); }
+  .side-brand{ display:flex; align-items:center; gap:10px; padding:20px 20px 4px; }
+  .side-brand svg{ width:26px; height:26px; flex:none; }
+  .side-brand h1{ font-size:15px; font-weight:700; letter-spacing:-0.01em; white-space:nowrap; overflow:hidden; }
+  .side-brand span{ color:var(--gold); }
+  .sidebar.collapsed .side-brand h1{ display:none; }
+  .plat-tag{ margin:8px 20px 18px; display:inline-flex; align-items:center; gap:5px; background:rgba(232,163,61,0.13); color:var(--gold); font-size:9.5px; font-weight:700; letter-spacing:0.06em; padding:4px 10px; border-radius:20px; white-space:nowrap; }
+  .sidebar.collapsed .plat-tag{ display:none; }
+
+  .side-nav{ flex:1; padding:8px 12px; position:relative; }
+  .nav-indicator{ position:absolute; left:12px; width:calc(100% - 24px); height:38px; background:rgba(232,163,61,0.13); border:1px solid rgba(232,163,61,0.32); border-radius:9px; top:8px; z-index:0; }
+  .nav-item{
+    position:relative; z-index:1; display:flex; align-items:center; gap:12px; height:38px;
+    width:100%; padding:0 12px; margin-bottom:2px; border-radius:9px; background:none; border:none;
+    color:rgba(245,241,232,0.62); font-size:13px; font-weight:500; text-align:left; transition:color 0.15s ease; white-space:nowrap; overflow:hidden;
+  }
+  .nav-item i{ width:16px; text-align:center; font-size:14px; flex:none; }
+  .nav-item:hover{ color:var(--cream); }
+  .nav-item.active{ color:var(--gold); font-weight:600; }
+  .nav-group-label{ font-size:9.5px; text-transform:uppercase; letter-spacing:0.08em; color:rgba(245,241,232,0.35); padding:16px 12px 6px; white-space:nowrap; overflow:hidden; }
+  .sidebar.collapsed .nav-group-label{ opacity:0; }
+
+  .side-foot{ padding:14px 20px 18px; border-top:1px solid var(--ink-line); display:flex; align-items:center; gap:10px; }
+  .side-foot .avatar{ width:32px; height:32px; border-radius:50%; background:rgba(232,163,61,0.18); color:var(--gold); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:11.5px; flex:none; }
+  .side-foot .who{ min-width:0; white-space:nowrap; overflow:hidden; }
+  .side-foot .who h5{ font-size:12px; font-weight:600; }
+  .side-foot .who p{ font-size:10px; color:rgba(245,241,232,0.45); }
+  .sidebar.collapsed .side-foot .who{ display:none; }
+  .collapse-btn{ margin:4px 12px 0; width:calc(100% - 24px); height:32px; border-radius:9px; background:none; border:1px solid var(--ink-line); color:rgba(245,241,232,0.5); display:flex; align-items:center; justify-content:center; font-size:12px; }
+  .collapse-btn:hover{ color:var(--cream); border-color:rgba(245,241,232,0.25); }
+
+  /* ---------- main ---------- */
+  .main{ flex:1; min-width:0; display:flex; flex-direction:column; }
+  .topbar{
+    position:sticky; top:0; z-index:20; background:rgba(246,245,242,0.88); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:15px 28px;
+  }
+  .page-title{ font-size:19px; font-weight:700; }
+  .page-sub{ font-size:12px; color:var(--muted); margin-top:2px; }
+  .topbar-right{ display:flex; align-items:center; gap:12px; }
+  .cmdk-trigger{
+    display:flex; align-items:center; gap:9px; background:var(--surface); border:1px solid var(--border);
+    border-radius:10px; padding:8px 10px 8px 13px; width:240px; color:var(--muted); font-size:12.5px;
+  }
+  .cmdk-trigger i{ font-size:12px; }
+  .cmdk-trigger kbd{ margin-left:auto; font-size:10.5px; background:var(--bg); border:1px solid var(--border); border-radius:5px; padding:2px 6px; color:var(--muted); font-family:inherit; }
+  .icon-btn{ width:38px; height:38px; border-radius:10px; background:var(--surface); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; position:relative; color:var(--ink); }
+  .icon-btn .dot{ position:absolute; top:8px; right:9px; width:6px; height:6px; border-radius:50%; background:var(--red); border:1.5px solid var(--surface); }
+
+  .content{ flex:1; padding:24px 28px 60px; }
+  .page{ display:none; }
+  .page.active{ display:block; }
+
+  /* ---------- kpis ---------- */
+  .kpi-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:22px; }
+  .kpi-card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; }
+  .kpi-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .kpi-icon{ width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:14px; }
+  .kpi-trend{ font-size:11px; font-weight:600; display:flex; align-items:center; gap:3px; }
+  .kpi-trend.up{ color:var(--green); } .kpi-trend.down{ color:var(--red); }
+  .kpi-val{ font-size:26px; font-weight:700; font-family:'Sora',sans-serif; }
+  .kpi-label{ font-size:12px; color:var(--muted); margin-top:3px; }
+  .skel{ background:linear-gradient(90deg, var(--border) 25%, #F0EFE9 37%, var(--border) 63%); background-size:400% 100%; animation:shimmer 1.4s ease infinite; border-radius:6px; }
+  @keyframes shimmer{ 0%{background-position:100% 50%;} 100%{background-position:0 50%;} }
+
+  .grid-2{ display:grid; grid-template-columns:1.4fr 1fr; gap:16px; margin-bottom:16px; }
+  .card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; }
+  .card-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+  .card-head h3{ font-size:14.5px; font-weight:600; }
+  .card-head .tag{ font-size:11.5px; color:var(--muted); }
+
+  .feed-item{ display:flex; align-items:flex-start; gap:11px; padding:10px 0; border-bottom:1px solid var(--border); }
+  .feed-item:last-child{ border-bottom:none; }
+  .feed-dot{ width:8px; height:8px; border-radius:50%; margin-top:5px; flex:none; }
+  .feed-text p{ font-size:12.5px; font-weight:500; }
+  .feed-text span{ font-size:11px; color:var(--muted); }
+
+  .toolbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; gap:12px; flex-wrap:wrap; }
+  .toolbar-left{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .filter-pill{ font-size:12px; font-weight:500; padding:8px 14px; border-radius:20px; border:1px solid var(--border); background:var(--surface); color:var(--muted); }
+  .filter-pill.active{ background:var(--ink); color:var(--cream); border-color:var(--ink); }
+  .btn-primary{ display:flex; align-items:center; gap:8px; background:var(--ink); color:var(--cream); border:none; border-radius:10px; padding:10px 16px; font-size:12.5px; font-weight:600; transition:transform 0.12s ease; }
+  .btn-primary:active{ transform:scale(0.96); }
+  .btn-primary i{ font-size:12px; }
+
+  .table-card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+  table{ width:100%; border-collapse:collapse; }
+  thead th{ text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:600; padding:13px 18px; border-bottom:1px solid var(--border); background:#FBFAF7; cursor:pointer; user-select:none; white-space:nowrap; }
+  thead th:hover{ color:var(--ink); }
+  thead th i{ font-size:9px; margin-left:5px; opacity:0.5; }
+  thead th.sorted i{ opacity:1; color:var(--gold-dim); }
+  tbody td{ padding:13px 18px; font-size:12.8px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  tbody tr:last-child td{ border-bottom:none; }
+  tbody tr{ transition:background 0.12s ease; }
+  tbody tr:hover{ background:#FBFAF7; }
+  .cell-name{ display:flex; align-items:center; gap:10px; font-weight:600; }
+  .cell-avatar{ width:30px; height:30px; border-radius:9px; background:var(--gold-soft); color:var(--gold-dim); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex:none; }
+  .badge{ display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:600; padding:4px 10px; border-radius:20px; }
+  .badge.green{ background:var(--green-soft); color:var(--green); }
+  .badge.gold{ background:var(--gold-soft); color:var(--gold-dim); }
+  .badge.red{ background:var(--red-soft); color:var(--red); }
+  .badge.gray{ background:#EFEDE5; color:var(--muted); }
+  .badge .dot{ width:5px; height:5px; border-radius:50%; background:currentColor; }
+  .row-actions{ display:flex; gap:6px; justify-content:flex-end; }
+  .row-actions button{ width:28px; height:28px; border-radius:8px; border:1px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:11.5px; }
+  .row-actions button:hover{ color:var(--ink); }
+  .row-actions button.del:hover{ color:var(--red); }
+  .empty-row td{ text-align:center; color:var(--muted); font-size:12.5px; padding:40px; }
+  .table-foot{ display:flex; align-items:center; justify-content:space-between; padding:13px 18px; font-size:11.5px; color:var(--muted); }
+
+  .chart-card canvas{ max-height:230px; }
+
+  /* ---------- drawer ---------- */
+  .overlay{ position:fixed; inset:0; background:rgba(10,10,10,0.4); backdrop-filter:blur(2px); z-index:90; opacity:0; pointer-events:none; }
+  .overlay.show{ pointer-events:auto; }
+  .drawer{ position:fixed; top:0; right:0; height:100vh; width:420px; max-width:92vw; background:var(--surface); z-index:95; box-shadow:-20px 0 50px rgba(0,0,0,0.15); transform:translateX(100%); display:flex; flex-direction:column; }
+  .drawer-head{ padding:22px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .drawer-head h3{ font-size:16px; font-weight:700; }
+  .drawer-close{ width:32px; height:32px; border-radius:9px; border:1px solid var(--border); background:none; display:flex; align-items:center; justify-content:center; color:var(--muted); }
+  .drawer-body{ flex:1; overflow-y:auto; padding:22px 24px; }
+  .form-field{ margin-bottom:16px; }
+  .form-field label{ display:block; font-size:11.5px; font-weight:600; color:var(--muted); margin-bottom:7px; }
+  .form-field input, .form-field select{ width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:9px; font-size:13px; outline:none; background:var(--bg); color:var(--text); }
+  .form-field input:focus, .form-field select:focus{ border-color:var(--ink); background:var(--surface); }
+  .form-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .drawer-foot{ padding:18px 24px; border-top:1px solid var(--border); display:flex; gap:10px; }
+  .btn-ghost{ flex:1; background:none; border:1px solid var(--border); border-radius:10px; padding:11px; font-size:12.5px; font-weight:600; color:var(--muted); }
+  .btn-save{ flex:1; background:var(--ink); color:var(--cream); border:none; border-radius:10px; padding:11px; font-size:12.5px; font-weight:600; }
+
+  .confirm-modal{ position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.9); opacity:0; width:340px; background:var(--surface); border-radius:16px; padding:22px; z-index:96; box-shadow:0 30px 60px rgba(0,0,0,0.25); pointer-events:none; }
+  .confirm-modal.show{ pointer-events:auto; }
+  .confirm-icon{ width:42px; height:42px; border-radius:12px; background:var(--red-soft); display:flex; align-items:center; justify-content:center; margin-bottom:14px; color:var(--red); font-size:17px; }
+  .confirm-modal h4{ font-size:14.5px; margin-bottom:6px; }
+  .confirm-modal p{ font-size:12px; color:var(--muted); margin-bottom:18px; line-height:1.5; }
+  .confirm-actions{ display:flex; gap:10px; }
+  .btn-danger{ flex:1; background:var(--red); color:#fff; border:none; border-radius:9px; padding:10px; font-size:12px; font-weight:600; }
+
+  /* ---------- command palette ---------- */
+  .cmdk-overlay{ position:fixed; inset:0; background:rgba(10,10,10,0.55); backdrop-filter:blur(3px); z-index:110; opacity:0; pointer-events:none; }
+  .cmdk-overlay.show{ pointer-events:auto; }
+  .cmdk{
+    position:fixed; top:14%; left:50%; transform:translateX(-50%) translateY(-14px); opacity:0; pointer-events:none;
+    width:560px; max-width:90vw; background:var(--surface); border-radius:16px; z-index:111;
+    box-shadow:0 40px 90px rgba(0,0,0,0.35); overflow:hidden;
+  }
+  .cmdk.show{ pointer-events:auto; }
+  .cmdk-input-row{ display:flex; align-items:center; gap:12px; padding:16px 18px; border-bottom:1px solid var(--border); }
+  .cmdk-input-row i{ color:var(--muted); font-size:14px; }
+  .cmdk-input-row input{ flex:1; border:none; outline:none; font-size:15px; font-family:inherit; color:var(--text); }
+  .cmdk-input-row kbd{ font-size:10.5px; background:var(--bg); border:1px solid var(--border); border-radius:5px; padding:2px 6px; color:var(--muted); }
+  .cmdk-list{ max-height:360px; overflow-y:auto; padding:8px; }
+  .cmdk-group-label{ font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); padding:10px 10px 4px; }
+  .cmdk-item{ display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:9px; cursor:pointer; font-size:13px; }
+  .cmdk-item i{ width:16px; text-align:center; color:var(--muted); font-size:13px; }
+  .cmdk-item.active{ background:var(--bg); }
+  .cmdk-item.active i{ color:var(--gold-dim); }
+  .cmdk-item span.hint{ margin-left:auto; font-size:10.5px; color:var(--muted); }
+
+  .toast-stack{ position:fixed; bottom:22px; right:22px; z-index:99; display:flex; flex-direction:column; gap:10px; align-items:flex-end; }
+  .toast{ display:flex; align-items:center; gap:10px; background:var(--ink); color:var(--cream); padding:12px 16px; border-radius:11px; font-size:12.5px; font-weight:500; box-shadow:0 14px 30px rgba(0,0,0,0.2); transform:translateX(120%); opacity:0; }
+  .toast i{ color:var(--gold); flex:none; }
+  .toast.error{ background:var(--red); } .toast.error i{ color:#fff; }
+
+  @media (max-width:1050px){
+    .sidebar{ width:var(--sidebar-w-collapsed); }
+    .side-brand h1, .nav-item span, .nav-group-label, .side-foot .who, .plat-tag, .collapse-btn span{ display:none; }
+    .kpi-row{ grid-template-columns:repeat(2,1fr); }
+    .grid-2{ grid-template-columns:1fr; }
+    .cmdk-trigger{ width:auto; }
+    .cmdk-trigger span, .cmdk-trigger kbd{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar" id="sidebar">
+    <div class="side-brand">
+      <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+        <polygon style="fill:#94A580;" points="237.53,102.388 239.832,106.378 222.406,136.562 185.824,199.921 122.46,163.339 159.042,99.98 195.624,36.615 197.258,33.78 233.712,95.766 	"/>
+        <polygon style="fill:#7FA661;" points="381.765,91.691 381.692,92.27 371.037,216.288 257.747,163.303 278.84,151.199 247.6,97.055 243.758,90.385 224.333,57.333 190.556,0 300.657,0 304.426,6.524 316.023,26.602 360.672,103.868 381.33,91.907 	"/>
+        <polygon style="fill:#94A580;" points="399.84,334.463 395.234,334.462 377.807,304.278 341.227,240.918 404.59,204.333 441.17,267.694 477.754,331.057 479.393,333.89 407.484,334.467 	"/>
+        <polygon style="fill:#7FA661;" points="336.953,440.363 449.404,440.359 456.943,440.364 512,345.002 407.131,345.844 399.432,345.839 336.947,345.838 336.95,321.5 234.457,393.101 336.958,464.706 	"/>
+        <polygon style="fill:#94A580;" points="120.28,365.191 122.584,361.203 157.437,361.202 230.598,361.204 230.6,434.37 157.438,434.369 84.272,434.37 80.999,434.373 116.454,371.809 	"/>
+        <polygon style="fill:#7FA661;" points="162.941,317.183 141.848,305.006 110.608,359.15 106.767,365.818 59.508,449.318 55.087,457.074 38.416,428.226 24.282,403.801 0,361.688 3.769,355.164 60.016,257.748 38.923,245.644 143.95,196.5 152.213,192.659 	"/>
+      </svg>
+      <h1>Propre<span>237</span></h1>
+    </div>
+    <div class="plat-tag"><i class="fa-solid fa-shield-halved"></i>&nbsp;CONSOLE PLATEFORME</div>
+
+    <nav class="side-nav" id="sideNav">
+      <div class="nav-indicator" id="navIndicator"></div>
+      <button class="nav-item active" data-page="dashboard"><i class="fa-solid fa-gauge"></i><span>Vue d'ensemble</span></button>
+      <button class="nav-item" data-page="societes"><i class="fa-solid fa-building"></i><span>Sociétés</span></button>
+      <button class="nav-item" data-page="agences"><i class="fa-solid fa-store"></i><span>Agences</span></button>
+      <button class="nav-item" data-page="utilisateurs"><i class="fa-solid fa-users"></i><span>Utilisateurs</span></button>
+      <button class="nav-item" data-page="rapports"><i class="fa-solid fa-file-lines"></i><span>Rapports</span></button>
+
+      <div class="nav-group-label">Système</div>
+      <button class="nav-item" data-page="parametres"><i class="fa-solid fa-gear"></i><span>Paramètres</span></button>
+    </nav>
+
+    <button class="collapse-btn" id="collapseBtn"><i class="fa-solid fa-angles-left"></i>&nbsp;<span>Réduire</span></button>
+    <div class="side-foot">
+      <div class="avatar">SA</div>
+      <div class="who"><h5>Super Admin</h5><p>admin@wastepro.cm</p></div>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <div class="page-title" id="pageTitle">Vue d'ensemble</div>
+        <div class="page-sub" id="pageSub">Toutes sociétés confondues</div>
+      </div>
+      <div class="topbar-right">
+        <button class="cmdk-trigger" id="cmdkTrigger"><i class="fa-solid fa-magnifying-glass"></i><span>Rechercher ou agir...</span><kbd>⌘K</kbd></button>
+        <button class="icon-btn" aria-label="Notifications"><i class="fa-solid fa-bell"></i><span class="dot"></span></button>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- ============ PAGE: DASHBOARD ============ -->
+      <section class="page active" id="page-dashboard">
+        <div class="kpi-row" id="kpiRow">
+          <div class="kpi-card">
+            <div class="kpi-top"><div class="kpi-icon" style="background:var(--gold-soft); color:var(--gold-dim);"><i class="fa-solid fa-building"></i></div><span class="kpi-trend up"><i class="fa-solid fa-arrow-up"></i> 2</span></div>
+            <div class="kpi-val"><span id="kpiSocietes">0</span></div>
+            <div class="kpi-label">Sociétés actives</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top"><div class="kpi-icon" style="background:var(--green-soft); color:var(--green);"><i class="fa-solid fa-store"></i></div><span class="kpi-trend up"><i class="fa-solid fa-arrow-up"></i> 3</span></div>
+            <div class="kpi-val"><span id="kpiAgences">0</span></div>
+            <div class="kpi-label">Agences</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top"><div class="kpi-icon" style="background:var(--blue-soft); color:var(--blue);"><i class="fa-solid fa-users"></i></div><span class="kpi-trend up"><i class="fa-solid fa-arrow-up"></i> 6.4%</span></div>
+            <div class="kpi-val"><span id="kpiUsers">0</span></div>
+            <div class="kpi-label">Utilisateurs</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top"><div class="kpi-icon" style="background:var(--red-soft); color:var(--red);"><i class="fa-solid fa-signal"></i></div><span class="kpi-trend down"><i class="fa-solid fa-arrow-down"></i> 0.1%</span></div>
+            <div class="kpi-val"><span id="kpiUptime">0</span>%</div>
+            <div class="kpi-label">Disponibilité plateforme</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card chart-card">
+            <div class="card-head"><h3>Nouvelles sociétés</h3><span class="tag">6 derniers mois</span></div>
+            <canvas id="growthChart" height="90"></canvas>
+          </div>
+          <div class="card chart-card">
+            <div class="card-head"><h3>Agences par société</h3></div>
+            <canvas id="agencyChart" height="90"></canvas>
+          </div>
+        </div>
+
+        <div class="grid-2" style="grid-template-columns:1fr;">
+          <div class="card">
+            <div class="card-head"><h3>Activité plateforme</h3><span class="tag">Temps réel</span></div>
+            <div id="activityFeed"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE: SOCIÉTÉS ============ -->
+      <section class="page" id="page-societes">
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <button class="filter-pill active" data-filter="all" data-scope="societes">Toutes</button>
+            <button class="filter-pill" data-filter="Actif" data-scope="societes">Actives</button>
+            <button class="filter-pill" data-filter="Suspendu" data-scope="societes">Suspendues</button>
+          </div>
+          <button class="btn-primary" id="addSocieteBtn"><i class="fa-solid fa-plus"></i>Nouvelle société</button>
+        </div>
+        <div class="table-card">
+          <table>
+            <thead><tr>
+              <th data-sort="raisonSociale" data-scope="societes">Société <i class="fa-solid fa-sort"></i></th>
+              <th data-sort="adresse" data-scope="societes">Adresse <i class="fa-solid fa-sort"></i></th>
+              <th data-sort="telephone" data-scope="societes">Téléphone <i class="fa-solid fa-sort"></i></th>
+              <th data-sort="status" data-scope="societes">Statut <i class="fa-solid fa-sort"></i></th>
+              <th></th>
+            </tr></thead>
+            <tbody id="societesBody"></tbody>
+          </table>
+          <div class="table-foot"><span id="societesCount">0 sociétés</span></div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE: AGENCES ============ -->
+      <section class="page" id="page-agences">
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <button class="filter-pill active" data-filter="all" data-scope="agences">Toutes</button>
+            <button class="filter-pill" data-filter="Actif" data-scope="agences">Actives</button>
+            <button class="filter-pill" data-filter="Suspendu" data-scope="agences">Suspendues</button>
+          </div>
+          <button class="btn-primary" id="addAgenceBtn"><i class="fa-solid fa-plus"></i>Nouvelle agence</button>
+        </div>
+        <div class="table-card">
+          <table>
+            <thead><tr>
+              <th data-sort="ville" data-scope="agences">Agence <i class="fa-solid fa-sort"></i></th>
+              <th data-sort="societe" data-scope="agences">Société <i class="fa-solid fa-sort"></i></th>
+              <th data-sort="responsable" data-scope="agences">Responsable <i class="fa-solid fa-sort"></i></th>
+              <th data-sort="status" data-scope="agences">Statut <i class="fa-solid fa-sort"></i></th>
+              <th></th>
+            </tr></thead>
+            <tbody id="agencesBody"></tbody>
+          </table>
+          <div class="table-foot"><span id="agencesCount">0 agences</span></div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE: UTILISATEURS ============ -->
+      <section class="page" id="page-utilisateurs">
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <button class="filter-pill active" data-filter="all" data-scope="utilisateurs">Tous</button>
+            <button class="filter-pill" data-filter="Administrateur Général" data-scope="utilisateurs">Admins</button>
+            <button class="filter-pill" data-filter="Responsable d'Agence" data-scope="utilisateurs">Resp. agence</button>
+          </div>
+          <button class="btn-primary" id="addUserBtn"><i class="fa-solid fa-plus"></i>Nouvel utilisateur</button>
+        </div>
+        <div class="table-card">
+          <table>
+            <thead><tr>
+              <th data-sort="nom" data-scope="utilisateurs">Utilisateur <i class="fa-solid fa-sort"></i></th>
+              <th data-sort="role" data-scope="utilisateurs">Rôle <i class="fa-solid fa-sort"></i></th>
+              <th data-sort="agence" data-scope="utilisateurs">Agence <i class="fa-solid fa-sort"></i></th>
+              <th data-sort="status" data-scope="utilisateurs">Statut <i class="fa-solid fa-sort"></i></th>
+              <th></th>
+            </tr></thead>
+            <tbody id="usersBody"></tbody>
+          </table>
+          <div class="table-foot"><span id="usersCount">0 utilisateurs</span></div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE: RAPPORTS ============ -->
+      <section class="page" id="page-rapports">
+        <div class="card">
+          <div class="card-head"><h3>Exports disponibles</h3></div>
+          <div class="feed-item"><div class="feed-dot" style="background:var(--gold);"></div><div class="feed-text"><p>Rapport mensuel — Juillet 2026</p><span>PDF · Excel · CSV</span></div></div>
+          <div class="feed-item"><div class="feed-dot" style="background:var(--green);"></div><div class="feed-text"><p>Rapport consolidé — S2 2026</p><span>PDF · Excel</span></div></div>
+          <div class="feed-item"><div class="feed-dot" style="background:var(--blue);"></div><div class="feed-text"><p>Journal des paiements</p><span>CSV</span></div></div>
+        </div>
+        <p style="font-size:11.5px; color:var(--muted); margin-top:10px;">Génération de rapports — module à connecter à une vraie source de données.</p>
+      </section>
+
+      <!-- ============ PAGE: PARAMÈTRES ============ -->
+      <section class="page" id="page-parametres">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head"><h3>Plateforme</h3></div>
+            <div class="form-field"><label>Platform name</label><input type="text" value="WastePro"></div>
+            <div class="form-field"><label>Support email</label><input type="text" value="support@wastepro.cm"></div>
+            <div class="form-field" style="margin-bottom:0;"><label>Fuseau horaire</label><input type="text" value="Afrique/Douala (GMT+1)"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Sécurité</h3></div>
+            <div class="feed-item"><div class="feed-dot" style="background:var(--green);"></div><div class="feed-text"><p>Double authentification (2FA)</p><span>Requise pour les Administrateurs Généraux</span></div></div>
+            <div class="feed-item"><div class="feed-dot" style="background:var(--gold);"></div><div class="feed-text"><p>Journalisation des actions</p><span>Activée — conservation 12 mois</span></div></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ================= DRAWER ================= -->
+<div class="overlay" id="overlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head"><h3 id="drawerTitle">Nouvelle société</h3><button class="drawer-close" id="drawerClose"><i class="fa-solid fa-xmark"></i></button></div>
+  <div class="drawer-body" id="drawerBody"></div>
+  <div class="drawer-foot"><button class="btn-ghost" id="drawerCancel">Annuler</button><button class="btn-save" id="drawerSave">Enregistrer</button></div>
+</div>
+
+<!-- ================= CONFIRM ================= -->
+<div class="confirm-modal" id="confirmModal">
+  <div class="confirm-icon"><i class="fa-solid fa-trash-can"></i></div>
+  <h4 id="confirmTitle">Supprimer cet élément ?</h4>
+  <p id="confirmText">Cette action est irréversible.</p>
+  <div class="confirm-actions"><button class="btn-ghost" id="confirmCancel">Annuler</button><button class="btn-danger" id="confirmDelete">Supprimer</button></div>
+</div>
+
+<!-- ================= COMMAND PALETTE ================= -->
+<div class="cmdk-overlay" id="cmdkOverlay"></div>
+<div class="cmdk" id="cmdk">
+  <div class="cmdk-input-row"><i class="fa-solid fa-magnifying-glass"></i><input id="cmdkInput" placeholder="Aller à... ou créer..."><kbd>Échap</kbd></div>
+  <div class="cmdk-list" id="cmdkList"></div>
+</div>
+
+<div class="toast-stack" id="toastStack"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"></script>
+<script>
+/* ============================================================
+   MOCK DATA
+============================================================ */
+let uid = 100;
+const nextId = () => 'id' + (uid++);
+
+let societes = [
+  { id:'so1', raisonSociale:'WastePro Douala Ltd', adresse:'Bonanjo, Douala', telephone:'+237 233 42 10 10', email:'contact@wastepro-douala.cm', status:'Active' },
+  { id:'so2', raisonSociale:'WastePro Yaoundé SA', adresse:'Bastos, Yaoundé', telephone:'+237 222 20 30 40', email:'contact@wastepro-yde.cm', status:'Active' },
+  { id:'so3', raisonSociale:'EcoCollecte Kribi', adresse:'Centre-ville, Kribi', telephone:'+237 233 46 12 00', email:'contact@ecocollecte-kribi.cm', status:'Suspendu' },
+];
+let agences = [
+  { id:'ag1', societe:'WastePro Douala Ltd', ville:'Douala — Bonanjo', responsable:'Jean Dooh', telephone:'+237 677 12 34 56', status:'Active' },
+  { id:'ag2', societe:'WastePro Douala Ltd', ville:'Douala — Bassa', responsable:'Aïcha Bello', telephone:'+237 699 33 67 41', status:'Active' },
+  { id:'ag3', societe:'WastePro Yaoundé SA', ville:'Yaoundé', responsable:'Marie Ekwalla', telephone:'+237 690 45 12 78', status:'Active' },
+  { id:'ag4', societe:'EcoCollecte Kribi', ville:'Kribi', responsable:'Samuel Njoya', telephone:'+237 655 88 21 09', status:'Suspendu' },
+];
+let utilisateurs = [
+  { id:'us1', nom:'Jean Dooh', telephone:'+237 677 12 34 56', role:"Responsable d'Agence", agence:'Douala — Bonanjo', status:'Actif' },
+  { id:'us2', nom:'Aïcha Bello', telephone:'+237 699 33 67 41', role:"Responsable d'Agence", agence:'Douala — Bassa', status:'Actif' },
+  { id:'us3', nom:'Marie Ekwalla', telephone:'+237 690 45 12 78', role:"Responsable d'Agence", agence:'Yaoundé', status:'Actif' },
+  { id:'us4', nom:'Admin Plateforme', telephone:'+237 6XX XXX XXX', role:'Administrateur Général', agence:'—', status:'Actif' },
+];
+const activity = [
+  { color:'#E8A33D', text:'Nouvelle société inscrite : EcoCollecte Kribi', time:'il y a 2 h' },
+  { color:'#1E9E5A', text:'Agence "Douala — Bassa" activée', time:'hier' },
+  { color:'#3D6BE8', text:"Nouveau Responsable d'Agence créé : Marie Ekwalla", time:'il y a 2 j' },
+  { color:'#C1443D', text:'Société "EcoCollecte Kribi" suspendue (impayé)', time:'il y a 3 j' },
+];
+
+let sortState = {}; // { scope: {key, dir} }
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ============================================================
+   HELPERS
+============================================================ */
+const BADGE_MAP = { 'Actif':'green', 'Suspendu':'red', 'Administrateur Général':'gold', "Responsable d'Agence":'gray' };
+function statusBadge(status){ return `<span class="badge ${BADGE_MAP[status]||'gray'}"><span class="dot"></span>${status}</span>`; }
+function initials(name){ return name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase(); }
+function escapeHtml(s){ return String(s).replace(/'/g,"&#39;").replace(/"/g,'&quot;'); }
+
+function animateRows(selector){
+  if (reduceMotion) return;
+  gsap.fromTo(document.querySelectorAll(selector), { opacity:0, y:8 }, { opacity:1, y:0, duration:0.32, stagger:0.03, ease:'power2.out' });
+}
+function actionButtons(type, id, label){
+  return `<div class="row-actions">
+    <button onclick="openDrawer('${type}','${id}')" aria-label="Modifier"><i class="fa-solid fa-pen"></i></button>
+    <button class="del" onclick="openConfirm('${type}','${id}','${escapeHtml(label)}')" aria-label="Supprimer"><i class="fa-solid fa-trash-can"></i></button>
+  </div>`;
+}
+function applySort(rows, scope){
+  const s = sortState[scope];
+  if (!s) return rows;
+  return [...rows].sort((a,b) => {
+    const av = String(a[s.key]).toLowerCase(), bv = String(b[s.key]).toLowerCase();
+    return av < bv ? (s.dir==='asc'?-1:1) : av > bv ? (s.dir==='asc'?1:-1) : 0;
+  });
+}
+function activeFilter(scope){
+  const btn = document.querySelector(`.filter-pill.active[data-scope="${scope}"]`);
+  return btn ? btn.dataset.filter : 'all';
+}
+
+/* ============================================================
+   RENDER: SOCIÉTÉS / AGENCES / UTILISATEURS
+============================================================ */
+function renderSocietes(){
+  const filter = activeFilter('societes');
+  let rows = societes.filter(s => filter==='all' || s.status===filter);
+  rows = applySort(rows, 'societes');
+  const body = document.getElementById('societesBody');
+  body.innerHTML = rows.length ? rows.map(s => {
+    const nbAg = agences.filter(a=>a.societe===s.raisonSociale).length;
+    return `<tr>
+      <td><div class="cell-name"><div class="cell-avatar">${initials(s.raisonSociale)}</div>${s.raisonSociale}</div></td>
+      <td>${s.adresse}</td>
+      <td>${s.telephone}</td>
+      <td>${statusBadge(s.status)}</td>
+      <td>${actionButtons('societe', s.id, s.raisonSociale)}</td>
+    </tr>`;
+  }).join('') : `<tr class="empty-row"><td colspan="5">Aucune société trouvée</td></tr>`;
+  document.getElementById('societesCount').textContent = rows.length + (rows.length>1?' sociétés':' société');
+  animateRows('#societesBody tr');
+}
+function renderAgences(){
+  const filter = activeFilter('agences');
+  let rows = agences.filter(a => filter==='all' || a.status===filter);
+  rows = applySort(rows, 'agences');
+  const body = document.getElementById('agencesBody');
+  body.innerHTML = rows.length ? rows.map(a => `
+    <tr>
+      <td><div class="cell-name"><div class="cell-avatar">${initials(a.ville)}</div>${a.ville}</div></td>
+      <td>${a.societe}</td>
+      <td>${a.responsable}</td>
+      <td>${statusBadge(a.status)}</td>
+      <td>${actionButtons('agence', a.id, a.ville)}</td>
+    </tr>`).join('') : `<tr class="empty-row"><td colspan="5">Aucune agence trouvée</td></tr>`;
+  document.getElementById('agencesCount').textContent = rows.length + (rows.length>1?' agences':' agence');
+  animateRows('#agencesBody tr');
+}
+function renderUsers(){
+  const filter = activeFilter('utilisateurs');
+  let rows = utilisateurs.filter(u => filter==='all' || u.role===filter);
+  rows = applySort(rows, 'utilisateurs');
+  const body = document.getElementById('usersBody');
+  body.innerHTML = rows.length ? rows.map(u => `
+    <tr>
+      <td><div class="cell-name"><div class="cell-avatar">${initials(u.nom)}</div>${u.nom}</div></td>
+      <td>${u.role}</td>
+      <td>${u.agence}</td>
+      <td>${statusBadge(u.status)}</td>
+      <td>${actionButtons('utilisateur', u.id, u.nom)}</td>
+    </tr>`).join('') : `<tr class="empty-row"><td colspan="5">Aucun utilisateur trouvé</td></tr>`;
+  document.getElementById('usersCount').textContent = rows.length + (rows.length>1?' utilisateurs':' utilisateur');
+  animateRows('#usersBody tr');
+}
+function renderActivityFeed(){
+  document.getElementById('activityFeed').innerHTML = activity.map(a => `
+    <div class="feed-item"><div class="feed-dot" style="background:${a.color};"></div><div class="feed-text"><p>${a.text}</p><span>${a.time}</span></div></div>`).join('');
+}
+function renderAll(){ renderSocietes(); renderAgences(); renderUsers(); renderActivityFeed(); }
+
+/* ---- sortable columns ---- */
+document.querySelectorAll('thead th[data-sort]').forEach(th => {
+  th.addEventListener('click', () => {
+    const scope = th.dataset.scope, key = th.dataset.sort;
+    const current = sortState[scope];
+    const dir = (current && current.key===key && current.dir==='asc') ? 'desc' : 'asc';
+    sortState[scope] = { key, dir };
+    document.querySelectorAll(`thead th[data-scope="${scope}"]`).forEach(t => {
+      t.classList.remove('sorted');
+      t.querySelector('i').className = 'fa-solid fa-sort';
+    });
+    th.classList.add('sorted');
+    th.querySelector('i').className = dir==='asc' ? 'fa-solid fa-sort-up' : 'fa-solid fa-sort-down';
+    ({societes:renderSocietes, agences:renderAgences, utilisateurs:renderUsers})[scope]?.();
+  });
+});
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+const PAGE_META = {
+  dashboard:    { title:"Vue d'ensemble", sub:'Toutes sociétés confondues' },
+  societes:     { title:'Sociétés', sub:'Gérer les sociétés clientes de la plateforme' },
+  agences:      { title:'Agences', sub:'Toutes les agences, toutes sociétés confondues' },
+  utilisateurs: { title:'Utilisateurs', sub:'Comptes Administrateurs et Responsables d\u2019Agence' },
+  rapports:     { title:'Rapports', sub:'Exports consolidés de la plateforme' },
+  parametres:   { title:'Paramètres', sub:'Configuration de la plateforme' },
+};
+
+function goToPage(page){
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.page===page));
+  const activeBtn = document.querySelector(`.nav-item[data-page="${page}"]`);
+  gsap.to('#navIndicator', { top: activeBtn.offsetTop, duration:0.32, ease:'power2.out' });
+
+  document.getElementById('pageTitle').textContent = PAGE_META[page].title;
+  document.getElementById('pageSub').textContent = PAGE_META[page].sub;
+
+  const outgoing = document.querySelector('.page.active');
+  const incoming = document.getElementById('page-'+page);
+  if (outgoing === incoming) return;
+
+  if (!reduceMotion) {
+    gsap.to(outgoing, { opacity:0, y:-8, duration:0.16, ease:'power1.in', onComplete:() => {
+      outgoing.classList.remove('active'); incoming.classList.add('active');
+      gsap.fromTo(incoming, {opacity:0,y:8}, {opacity:1,y:0,duration:0.26,ease:'power2.out'});
+    }});
+  } else { outgoing.classList.remove('active'); incoming.classList.add('active'); }
+}
+document.querySelectorAll('.nav-item').forEach(b => b.addEventListener('click', () => goToPage(b.dataset.page)));
+
+document.querySelectorAll('.filter-pill').forEach(btn => btn.addEventListener('click', () => {
+  const scope = btn.dataset.scope;
+  document.querySelectorAll(`.filter-pill[data-scope="${scope}"]`).forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  ({societes:renderSocietes, agences:renderAgences, utilisateurs:renderUsers})[scope]?.();
+}));
+
+/* ---- sidebar collapse ---- */
+document.getElementById('collapseBtn').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+  setTimeout(() => {
+    const activeBtn = document.querySelector('.nav-item.active');
+    gsap.set('#navIndicator', { top: activeBtn.offsetTop });
+  }, 260);
+});
+
+/* ============================================================
+   DRAWER — création / édition
+============================================================ */
+const FORM_BUILDERS = {
+  societe: (d={}) => `
+    <div class="form-field"><label>Company name</label><input id="f_raisonSociale" value="${d.raisonSociale||''}" placeholder="Ex. WastePro Douala Ltd"></div>
+    <div class="form-field"><label>Adresse</label><input id="f_adresse" value="${d.adresse||''}" placeholder="Ex. Bonanjo, Douala"></div>
+    <div class="form-row">
+      <div class="form-field"><label>Téléphone</label><input id="f_telephone" value="${d.telephone||''}" placeholder="+237 2XX XX XX XX"></div>
+      <div class="form-field"><label>Email</label><input id="f_email" value="${d.email||''}" placeholder="contact@societe.cm"></div>
+    </div>
+    <div class="form-field"><label>Statut</label><select id="f_status">${['Actif','Suspendu'].map(s=>`<option ${d.status===s?'selected':''}>${s}</option>`).join('')}</select></div>`,
+  agence: (d={}) => `
+    <div class="form-field"><label>Société</label><select id="f_societe">${societes.map(s=>`<option ${d.societe===s.raisonSociale?'selected':''}>${s.raisonSociale}</option>`).join('')}</select></div>
+    <div class="form-field"><label>Ville</label><input id="f_ville" value="${d.ville||''}" placeholder="Ex. Douala — Bonanjo"></div>
+    <div class="form-field"><label>Responsable</label><input id="f_responsable" value="${d.responsable||''}" placeholder="Nom du responsable"></div>
+    <div class="form-row">
+      <div class="form-field"><label>Téléphone</label><input id="f_telephone2" value="${d.telephone||''}" placeholder="+237 6XX XX XX XX"></div>
+      <div class="form-field"><label>Statut</label><select id="f_status">${['Actif','Suspendu'].map(s=>`<option ${d.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    </div>`,
+  utilisateur: (d={}) => `
+    <div class="form-field"><label>Nom complet</label><input id="f_nom" value="${d.nom||''}" placeholder="Ex. Marie Ekwalla"></div>
+    <div class="form-field"><label>Téléphone</label><input id="f_telephone3" value="${d.telephone||''}" placeholder="+237 6XX XX XX XX"></div>
+    <div class="form-row">
+      <div class="form-field"><label>Rôle</label><select id="f_role">${['Administrateur Général',"Responsable d'Agence"].map(r=>`<option ${d.role===r?'selected':''}>${r}</option>`).join('')}</select></div>
+      <div class="form-field"><label>Agence rattachée</label><select id="f_agence"><option ${d.agence==='—'?'selected':''}>—</option>${agences.map(a=>`<option ${d.agence===a.ville?'selected':''}>${a.ville}</option>`).join('')}</select></div>
+    </div>
+    <div class="form-field"><label>Statut</label><select id="f_status">${['Actif','Suspendu'].map(s=>`<option ${d.status===s?'selected':''}>${s}</option>`).join('')}</select></div>`,
+};
+const ENTITY_META = {
+  societe:     { store:()=>societes,     titleNew:'Nouvelle société',   titleEdit:'Modifier la société',   render:renderSocietes },
+  agence:      { store:()=>agences,      titleNew:'Nouvelle agence',    titleEdit:"Modifier l'agence",      render:renderAgences },
+  utilisateur: { store:()=>utilisateurs, titleNew:'Nouvel utilisateur', titleEdit:"Modifier l'utilisateur", render:renderUsers },
+};
+let editCtx = { type:null, id:null };
+
+function openDrawer(type, id=null){
+  editCtx = { type, id };
+  const meta = ENTITY_META[type];
+  const data = id ? meta.store().find(x=>x.id===id) : {};
+  document.getElementById('drawerTitle').textContent = id ? meta.titleEdit : meta.titleNew;
+  document.getElementById('drawerBody').innerHTML = FORM_BUILDERS[type](data||{});
+  document.getElementById('overlay').classList.add('show');
+  gsap.to('#overlay', { opacity:1, duration:0.25 });
+  gsap.to('#drawer', { x:'0%', duration:0.4, ease:'power3.out' });
+}
+function closeDrawer(){
+  gsap.to('#overlay', { opacity:0, duration:0.2, onComplete:() => document.getElementById('overlay').classList.remove('show') });
+  gsap.to('#drawer', { x:'100%', duration:0.35, ease:'power2.in' });
+}
+document.getElementById('overlay').addEventListener('click', () => { closeDrawer(); closeConfirm(); });
+document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+document.getElementById('drawerCancel').addEventListener('click', closeDrawer);
+
+function readForm(type){
+  const v = id => document.getElementById(id)?.value?.trim();
+  switch(type){
+    case 'societe': return { raisonSociale:v('f_raisonSociale'), adresse:v('f_adresse'), telephone:v('f_telephone'), email:v('f_email'), status:v('f_status') };
+    case 'agence': return { societe:v('f_societe'), ville:v('f_ville'), responsable:v('f_responsable'), telephone:v('f_telephone2'), status:v('f_status') };
+    case 'utilisateur': return { nom:v('f_nom'), telephone:v('f_telephone3'), role:v('f_role'), agence:v('f_agence'), status:v('f_status') };
+  }
+}
+document.getElementById('drawerSave').addEventListener('click', () => {
+  const { type, id } = editCtx;
+  const values = readForm(type);
+  const meta = ENTITY_META[type];
+  const store = meta.store();
+  if (id) { Object.assign(store.find(x=>x.id===id), values); showToast('Modifications enregistrées.'); }
+  else { store.push({ id:nextId(), ...values }); showToast('Élément créé avec succès.'); }
+  meta.render();
+  renderKPIs();
+  closeDrawer();
+});
+
+document.getElementById('addSocieteBtn').addEventListener('click', () => openDrawer('societe'));
+document.getElementById('addAgenceBtn').addEventListener('click', () => openDrawer('agence'));
+document.getElementById('addUserBtn').addEventListener('click', () => openDrawer('utilisateur'));
+
+/* ============================================================
+   CONFIRM (delete)
+============================================================ */
+let deleteCtx = { type:null, id:null };
+function openConfirm(type, id, label){
+  deleteCtx = { type, id };
+  document.getElementById('confirmText').textContent = `"${label}" sera définitivement supprimé. Cette action est irréversible.`;
+  document.getElementById('overlay').classList.add('show');
+  gsap.to('#overlay', { opacity:1, duration:0.2 });
+  document.getElementById('confirmModal').classList.add('show');
+  gsap.to('#confirmModal', { opacity:1, scale:1, duration:0.25, ease:'back.out(1.6)' });
+}
+function closeConfirm(){
+  gsap.to('#confirmModal', { opacity:0, scale:0.9, duration:0.18 });
+  gsap.to('#overlay', { opacity:0, duration:0.18, onComplete:() => document.getElementById('overlay').classList.remove('show') });
+  document.getElementById('confirmModal').classList.remove('show');
+}
+document.getElementById('confirmCancel').addEventListener('click', closeConfirm);
+document.getElementById('confirmDelete').addEventListener('click', () => {
+  const { type, id } = deleteCtx;
+  const meta = ENTITY_META[type];
+  const store = meta.store();
+  const idx = store.findIndex(x=>x.id===id);
+  if (idx>-1) store.splice(idx,1);
+  meta.render();
+  renderKPIs();
+  showToast('Élément supprimé.', 'error');
+  closeConfirm();
+});
+
+/* ============================================================
+   TOASTS
+============================================================ */
+function showToast(msg, kind='success'){
+  const stack = document.getElementById('toastStack');
+  const el = document.createElement('div');
+  el.className = 'toast' + (kind==='error' ? ' error' : '');
+  el.innerHTML = `<i class="fa-solid ${kind==='error'?'fa-circle-exclamation':'fa-circle-check'}"></i><span>${msg}</span>`;
+  stack.appendChild(el);
+  gsap.to(el, { x:0, opacity:1, duration:0.35, ease:'power2.out' });
+  setTimeout(() => gsap.to(el, { x:120, opacity:0, duration:0.3, ease:'power2.in', onComplete:()=>el.remove() }), 3000);
+}
+
+/* ============================================================
+   COMMAND PALETTE
+============================================================ */
+const CMDK_NAV = [
+  { icon:'fa-gauge', label:"Vue d'ensemble", hint:'Page', run:()=>goToPage('dashboard') },
+  { icon:'fa-building', label:'Sociétés', hint:'Page', run:()=>goToPage('societes') },
+  { icon:'fa-store', label:'Agences', hint:'Page', run:()=>goToPage('agences') },
+  { icon:'fa-users', label:'Utilisateurs', hint:'Page', run:()=>goToPage('utilisateurs') },
+  { icon:'fa-file-lines', label:'Rapports', hint:'Page', run:()=>goToPage('rapports') },
+  { icon:'fa-gear', label:'Paramètres', hint:'Page', run:()=>goToPage('parametres') },
+];
+const CMDK_ACTIONS = [
+  { icon:'fa-plus', label:'Nouvelle société', hint:'Créer', run:()=>{ goToPage('societes'); openDrawer('societe'); } },
+  { icon:'fa-plus', label:'Nouvelle agence', hint:'Créer', run:()=>{ goToPage('agences'); openDrawer('agence'); } },
+  { icon:'fa-plus', label:'Nouvel utilisateur', hint:'Créer', run:()=>{ goToPage('utilisateurs'); openDrawer('utilisateur'); } },
+];
+let cmdkActiveIndex = 0;
+
+function renderCmdk(query=''){
+  const q = query.trim().toLowerCase();
+  const filt = arr => arr.filter(i => i.label.toLowerCase().includes(q));
+  const navItems = filt(CMDK_NAV), actionItems = filt(CMDK_ACTIONS);
+  let html = '';
+  if (navItems.length) html += `<div class="cmdk-group-label">Navigation</div>` + navItems.map((i,idx) => cmdkItemHtml(i, idx)).join('');
+  if (actionItems.length) html += `<div class="cmdk-group-label">Actions</div>` + actionItems.map((i,idx) => cmdkItemHtml(i, navItems.length+idx)).join('');
+  if (!navItems.length && !actionItems.length) html = `<div class="cmdk-item" style="color:var(--muted);">Aucun résultat</div>`;
+  document.getElementById('cmdkList').innerHTML = html;
+  window._cmdkFlat = [...navItems, ...actionItems];
+  cmdkActiveIndex = 0;
+  highlightCmdk();
+}
+function cmdkItemHtml(item, idx){
+  return `<div class="cmdk-item" data-idx="${idx}"><i class="fa-solid ${item.icon}"></i>${item.label}<span class="hint">${item.hint}</span></div>`;
+}
+function highlightCmdk(){
+  document.querySelectorAll('.cmdk-item[data-idx]').forEach(el => el.classList.toggle('active', Number(el.dataset.idx)===cmdkActiveIndex));
+}
+function openCmdk(){
+  document.getElementById('cmdkOverlay').classList.add('show');
+  gsap.to('#cmdkOverlay', { opacity:1, duration:0.2 });
+  document.getElementById('cmdk').classList.add('show');
+  gsap.to('#cmdk', { opacity:1, y:0, duration:0.25, ease:'power2.out' });
+  document.getElementById('cmdkInput').value = '';
+  renderCmdk();
+  setTimeout(() => document.getElementById('cmdkInput').focus(), 50);
+}
+function closeCmdk(){
+  gsap.to('#cmdk', { opacity:0, y:-14, duration:0.18 });
+  gsap.to('#cmdkOverlay', { opacity:0, duration:0.18, onComplete:() => document.getElementById('cmdkOverlay').classList.remove('show') });
+  document.getElementById('cmdk').classList.remove('show');
+}
+document.getElementById('cmdkTrigger').addEventListener('click', openCmdk);
+document.getElementById('cmdkOverlay').addEventListener('click', closeCmdk);
+document.getElementById('cmdkInput').addEventListener('input', e => renderCmdk(e.target.value));
+document.getElementById('cmdkList').addEventListener('click', e => {
+  const item = e.target.closest('.cmdk-item[data-idx]'); if (!item) return;
+  window._cmdkFlat[Number(item.dataset.idx)]?.run();
+  closeCmdk();
+});
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase()==='k') { e.preventDefault(); openCmdk(); }
+  if (e.key === 'Escape') closeCmdk();
+  if (document.getElementById('cmdk').classList.contains('show')) {
+    const flat = window._cmdkFlat || [];
+    if (e.key === 'ArrowDown') { e.preventDefault(); cmdkActiveIndex = Math.min(cmdkActiveIndex+1, flat.length-1); highlightCmdk(); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); cmdkActiveIndex = Math.max(cmdkActiveIndex-1, 0); highlightCmdk(); }
+    if (e.key === 'Enter') { flat[cmdkActiveIndex]?.run(); closeCmdk(); }
+  }
+});
+
+/* ============================================================
+   KPIs + CHARTS
+============================================================ */
+function countUp(id, target, duration=1.1){
+  const el = document.getElementById(id); if (!el) return;
+  const obj = { val:0 };
+  gsap.to(obj, { val:target, duration, ease:'power2.out', onUpdate:()=>{ el.textContent = Math.round(obj.val).toLocaleString('fr-FR'); } });
+}
+function renderKPIs(){
+  countUp('kpiSocietes', societes.filter(s=>s.status==='Actif').length);
+  countUp('kpiAgences', agences.length);
+  countUp('kpiUsers', utilisateurs.length);
+  countUp('kpiUptime', 99.9, 1.1);
+}
+function initCharts(){
+  new Chart(document.getElementById('growthChart'), {
+    type:'line',
+    data:{ labels:['Mar','Avr','Mai','Jun','Jul','Aoû'], datasets:[{ data:[1,1,2,2,3,3], borderColor:'#12151A', backgroundColor:'rgba(18,21,26,0.06)', borderWidth:2.5, fill:true, tension:0.35, pointRadius:0 }] },
+    options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{display:false}, x:{grid:{display:false}, ticks:{color:'#84868C', font:{size:10.5}}} } }
+  });
+  new Chart(document.getElementById('agencyChart'), {
+    type:'bar',
+    data:{ labels: societes.map(s=>s.raisonSociale.split(' ')[0]), datasets:[{ data: societes.map(s=>agences.filter(a=>a.societe===s.raisonSociale).length), backgroundColor:'#E8A33D', borderRadius:5, maxBarThickness:26 }] },
+    options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{display:false,beginAtZero:true}, x:{grid:{display:false}, ticks:{color:'#84868C', font:{size:10.5}}} } }
+  });
+}
+
+/* ============================================================
+   INIT — avec un court skeleton loading sur les KPIs
+============================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  const dashBtn = document.querySelector('.nav-item[data-page="dashboard"]');
+  gsap.set('#navIndicator', { top: dashBtn.offsetTop });
+
+  document.querySelectorAll('.kpi-val').forEach(el => { el.classList.add('skel'); el.style.height='26px'; el.style.width='60%'; });
+  renderAll();
+
+  setTimeout(() => {
+    document.querySelectorAll('.kpi-val').forEach(el => { el.classList.remove('skel'); el.style.height=''; el.style.width=''; });
+    renderKPIs();
+    initCharts();
+  }, 450);
+});
+</script>
+</body>
+</html>

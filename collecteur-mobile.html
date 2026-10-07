@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propre237 — Collecteur</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<style>
+  :root{
+    --green:#0F3D2E; --green-soft:#E7EFE9;
+    --gold:#E8A33D; --gold-soft:#FBEDD6;
+    --red:#C1443D; --red-soft:#F8E4E2;
+    --blue:#3D6BE8; --blue-soft:#E7EEFB;
+    --cream:#F5F1E8;
+    --bg:#F6F4EE; --surface:#FFFFFF; --border:#EAE5D8;
+    --text:#182620; --muted:#7C8A80;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+  body{ font-family:'Inter',sans-serif; background:#DEDBD1; color:var(--text); display:flex; align-items:center; justify-content:center; min-height:100vh; padding:24px; }
+  h1,h2,h3,h4{ font-family:'Sora',sans-serif; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  .phone{ width:390px; height:844px; background:#0A0A0A; border-radius:46px; padding:12px; box-shadow:0 40px 80px rgba(0,0,0,0.35); position:relative; }
+  .notch{ position:absolute; top:12px; left:50%; transform:translateX(-50%); width:120px; height:26px; background:#0A0A0A; border-radius:0 0 16px 16px; z-index:80; }
+  .phone-screen{ width:100%; height:100%; border-radius:34px; overflow:hidden; position:relative; background:var(--bg); display:flex; flex-direction:column; }
+  @media (max-width:460px){
+    body{ padding:0; background:var(--bg); }
+    .phone{ width:100%; height:100vh; height:100dvh; border-radius:0; padding:0; box-shadow:none; }
+    .phone-screen{ border-radius:0; }
+    .notch{ display:none; }
+  }
+
+  /* ---------- topbar ---------- */
+  .topbar{ flex:none; background:var(--green); color:var(--cream); padding:18px 18px 20px; border-radius:0 0 22px 22px; }
+  .topbar-row{ display:flex; align-items:center; justify-content:space-between; }
+  .greet{ display:flex; align-items:center; gap:10px; }
+  .avatar{ width:38px; height:38px; border-radius:50%; background:rgba(232,163,61,0.22); color:var(--gold); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex:none; }
+  .greet h1{ font-size:15px; font-weight:700; }
+  .greet p{ font-size:10.5px; color:rgba(245,241,232,0.6); margin-top:1px; }
+  .sync-badge{ display:flex; align-items:center; gap:5px; font-size:10px; font-weight:600; color:#8FD9AE; }
+  .sync-badge i{ font-size:7px; }
+  .icon-btn{ width:34px; height:34px; border-radius:10px; background:rgba(245,241,232,0.1); border:1px solid rgba(245,241,232,0.15); display:flex; align-items:center; justify-content:center; color:var(--cream); font-size:13px; }
+
+  .progress-card{ margin-top:16px; background:rgba(245,241,232,0.08); border:1px solid rgba(245,241,232,0.14); border-radius:16px; padding:14px 16px; display:flex; align-items:center; gap:14px; }
+  .ring-wrap{ position:relative; width:56px; height:56px; flex:none; }
+  .ring-wrap svg{ width:100%; height:100%; transform:rotate(-90deg); }
+  .ring-bg{ fill:none; stroke:rgba(245,241,232,0.15); stroke-width:6; }
+  .ring-fg{ fill:none; stroke:var(--gold); stroke-width:6; stroke-linecap:round; stroke-dasharray:151; stroke-dashoffset:151; }
+  .ring-label{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Sora',sans-serif; font-weight:700; font-size:13px; }
+  .progress-info{ flex:1; }
+  .progress-info h3{ font-size:13px; font-weight:600; }
+  .progress-info p{ font-size:10.5px; color:rgba(245,241,232,0.55); margin-top:2px; }
+
+  /* ---------- content ---------- */
+  .content{ flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:16px 16px 96px; }
+  .content::-webkit-scrollbar{ display:none; }
+  .page{ display:none; }
+  .page.active{ display:block; }
+
+  .filter-row{ display:flex; gap:8px; margin-bottom:14px; overflow-x:auto; }
+  .chip{ flex:none; font-size:11.5px; font-weight:600; padding:7px 14px; border-radius:20px; border:1px solid var(--border); background:var(--surface); color:var(--muted); }
+  .chip.active{ background:var(--green); color:var(--cream); border-color:var(--green); }
+
+  .client-card{ display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--border); border-radius:15px; padding:13px 14px; margin-bottom:10px; position:relative; overflow:hidden; }
+  .client-card::before{ content:''; position:absolute; left:0; top:0; bottom:0; width:4px; }
+  .client-card.state-afaire::before{ background:var(--border); }
+  .client-card.state-encours::before{ background:var(--gold); }
+  .client-card.state-termine::before{ background:#1E9E5A; }
+  .client-card.state-manque::before{ background:var(--red); }
+  .client-num{ width:30px; height:30px; border-radius:9px; background:var(--green-soft); color:var(--green); font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex:none; }
+  .client-main{ flex:1; min-width:0; }
+  .client-main h5{ font-size:13.5px; font-weight:600; }
+  .client-main p{ font-size:11px; color:var(--muted); margin-top:2px; display:flex; align-items:center; gap:5px; }
+  .client-right{ display:flex; flex-direction:column; align-items:flex-end; gap:5px; flex:none; }
+  .time-tag{ font-size:11px; font-weight:700; color:var(--text); }
+  .badge{ display:inline-flex; align-items:center; gap:4px; font-size:9.5px; font-weight:700; padding:3px 8px; border-radius:20px; }
+  .badge.gray{ background:#EFEDE5; color:var(--muted); }
+  .badge.gold{ background:var(--gold-soft); color:#B4740E; }
+  .badge.green{ background:var(--green-soft); color:#1E9E5A; }
+  .badge.red{ background:var(--red-soft); color:var(--red); }
+  .empty-state{ text-align:center; padding:44px 20px; color:var(--muted); font-size:12.5px; }
+
+  .hist-day{ font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; margin:16px 0 8px; }
+  .hist-day:first-child{ margin-top:0; }
+
+  /* ---------- profil ---------- */
+  .profile-card{ background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; text-align:center; margin-bottom:14px; }
+  .profile-avatar{ width:64px; height:64px; border-radius:50%; background:var(--green-soft); color:var(--green); display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:700; margin:0 auto 10px; }
+  .profile-card h3{ font-size:15px; }
+  .profile-card p{ font-size:11.5px; color:var(--muted); margin-top:2px; }
+  .stat-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
+  .stat-box{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px 8px; text-align:center; }
+  .stat-box .v{ font-family:'Sora',sans-serif; font-size:18px; font-weight:700; color:var(--green); }
+  .stat-box .l{ font-size:9.5px; color:var(--muted); margin-top:2px; }
+  .profile-row{ display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:13px 14px; margin-bottom:9px; font-size:12.5px; font-weight:500; }
+  .profile-row i{ width:16px; color:var(--muted); }
+  .logout-btn{ width:100%; background:var(--red-soft); color:var(--red); border:none; border-radius:12px; padding:13px; font-size:12.5px; font-weight:700; margin-top:6px; }
+
+  /* ---------- bottom nav ---------- */
+  .tabbar{ position:absolute; left:0; right:0; bottom:0; z-index:35; background:rgba(255,255,255,0.94); backdrop-filter:blur(14px); border-top:1px solid var(--border); display:flex; padding:9px 4px calc(env(safe-area-inset-bottom,0px) + 9px); }
+  .tab-item{ flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; background:none; border:none; color:var(--muted); padding:4px; }
+  .tab-item i{ font-size:17px; }
+  .tab-item span{ font-size:9.5px; font-weight:600; }
+  .tab-item.active{ color:var(--green); }
+
+  /* ---------- overlay / sheet ---------- */
+  .overlay{ position:fixed; inset:0; background:rgba(10,42,32,0.4); z-index:88; opacity:0; pointer-events:none; }
+  .overlay.show{ pointer-events:auto; }
+  .sheet{ position:absolute; left:0; right:0; bottom:0; z-index:95; background:var(--surface); border-radius:22px 22px 0 0; max-height:90%; display:flex; flex-direction:column; transform:translateY(100%); box-shadow:0 -20px 50px rgba(0,0,0,0.2); }
+  .sheet-handle{ width:36px; height:4px; border-radius:3px; background:var(--border); margin:10px auto 4px; }
+  .sheet-body{ flex:1; overflow-y:auto; padding:6px 20px 20px; padding-bottom:calc(env(safe-area-inset-bottom,0px) + 20px); }
+
+  /* client detail */
+  .cd-head{ display:flex; align-items:center; gap:12px; padding:10px 0 16px; }
+  .cd-avatar{ width:50px; height:50px; border-radius:14px; background:var(--green-soft); color:var(--green); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px; flex:none; }
+  .cd-head h3{ font-size:15.5px; }
+  .cd-head p{ font-size:11.5px; color:var(--muted); margin-top:2px; }
+  .cd-actions{ display:flex; gap:10px; margin-bottom:16px; }
+  .cd-actions a, .cd-actions button{ flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:11px 8px; font-size:10.5px; font-weight:600; color:var(--text); text-decoration:none; }
+  .cd-actions i{ font-size:15px; color:var(--green); }
+  .cd-info{ background:var(--bg); border-radius:12px; padding:12px 14px; margin-bottom:16px; }
+  .cd-info-row{ display:flex; justify-content:space-between; font-size:12px; padding:6px 0; }
+  .cd-info-row span:first-child{ color:var(--muted); }
+  .cd-info-row span:last-child{ font-weight:600; }
+  .cd-primary-btn{ width:100%; background:var(--green); color:var(--cream); border:none; border-radius:13px; padding:15px; font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px; }
+  .cd-secondary-row{ display:flex; gap:10px; margin-top:10px; }
+  .cd-secondary-row button{ flex:1; background:none; border:1px solid var(--border); border-radius:12px; padding:11px; font-size:11.5px; font-weight:600; color:var(--muted); }
+  .cd-secondary-row button.danger{ color:var(--red); border-color:rgba(193,68,61,0.3); }
+
+  .cd-done-card{ background:var(--green-soft); border-radius:14px; padding:16px; text-align:center; }
+  .cd-done-card i{ font-size:26px; color:#1E9E5A; margin-bottom:8px; }
+  .cd-done-card h4{ font-size:14px; margin-bottom:4px; }
+  .cd-done-card p{ font-size:11.5px; color:var(--muted); }
+  .cd-done-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; text-align:left; }
+  .cd-done-grid div{ background:var(--surface); border-radius:10px; padding:9px 11px; }
+  .cd-done-grid span{ display:block; font-size:9.5px; color:var(--muted); }
+  .cd-done-grid strong{ font-size:12.5px; }
+
+  /* collecte flow steps */
+  .step-dots{ display:flex; justify-content:center; gap:6px; margin:4px 0 18px; }
+  .step-dots span{ width:7px; height:7px; border-radius:50%; background:var(--border); }
+  .step-dots span.active{ background:var(--green); width:20px; border-radius:4px; }
+  .step-title{ text-align:center; font-size:14.5px; font-weight:700; margin-bottom:4px; }
+  .step-sub{ text-align:center; font-size:11.5px; color:var(--muted); margin-bottom:20px; }
+
+  .method-tabs{ display:flex; background:var(--bg); border-radius:11px; padding:4px; margin-bottom:20px; }
+  .method-tabs button{ flex:1; background:none; border:none; padding:9px; font-size:12px; font-weight:600; color:var(--muted); border-radius:8px; }
+  .method-tabs button.active{ background:var(--surface); color:var(--green); box-shadow:0 2px 6px rgba(0,0,0,0.06); }
+
+  .scan-box{ width:180px; height:180px; margin:0 auto 18px; position:relative; background:#0A0A0A; border-radius:18px; overflow:hidden; }
+  .scan-box .corner{ position:absolute; width:26px; height:26px; border:3px solid var(--gold); }
+  .scan-box .tl{ top:10px; left:10px; border-right:none; border-bottom:none; }
+  .scan-box .tr{ top:10px; right:10px; border-left:none; border-bottom:none; }
+  .scan-box .bl{ bottom:10px; left:10px; border-right:none; border-top:none; }
+  .scan-box .br{ bottom:10px; right:10px; border-left:none; border-top:none; }
+  .scan-line{ position:absolute; left:14px; right:14px; height:2px; background:var(--gold); top:14px; box-shadow:0 0 8px var(--gold); }
+  .scan-hint{ position:absolute; bottom:14px; left:0; right:0; text-align:center; color:rgba(245,241,232,0.7); font-size:10px; }
+
+  .otp-row{ display:flex; gap:10px; justify-content:center; margin-bottom:20px; }
+  .otp-row input{ width:48px; height:56px; text-align:center; font-size:22px; font-weight:700; border:1.5px solid var(--border); border-radius:12px; outline:none; font-family:'Sora',sans-serif; }
+  .otp-row input:focus{ border-color:var(--green); }
+
+  .photo-zone{ width:100%; aspect-ratio:4/3; border:2px dashed var(--border); border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:var(--muted); background:var(--bg); margin-bottom:18px; overflow:hidden; position:relative; }
+  .photo-zone i{ font-size:26px; }
+  .photo-zone span{ font-size:12px; font-weight:600; }
+  .photo-zone img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .retake-btn{ position:absolute; bottom:10px; right:10px; background:rgba(10,10,10,0.6); color:#fff; border:none; border-radius:20px; padding:7px 12px; font-size:10.5px; font-weight:600; display:flex; align-items:center; gap:5px; }
+
+  .form-field{ margin-bottom:15px; }
+  .form-field label{ display:block; font-size:11px; font-weight:600; color:var(--muted); margin-bottom:6px; }
+  .form-field input, .form-field textarea{ width:100%; padding:11px 12px; border:1px solid var(--border); border-radius:10px; font-size:14px; outline:none; background:var(--bg); color:var(--text); font-family:inherit; resize:none; }
+  .form-field input:focus, .form-field textarea:focus{ border-color:var(--green); background:var(--surface); }
+
+  .step-nav{ display:flex; gap:10px; margin-top:6px; }
+  .step-nav .back{ flex:none; width:48px; background:var(--bg); border:1px solid var(--border); border-radius:12px; display:flex; align-items:center; justify-content:center; color:var(--muted); }
+  .step-nav .next{ flex:1; background:var(--green); color:var(--cream); border:none; border-radius:12px; font-size:14px; font-weight:700; }
+  .step-nav .next:disabled{ opacity:0.4; }
+
+  .reason-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px; }
+  .reason-chip{ background:var(--bg); border:1.5px solid var(--border); border-radius:12px; padding:14px 10px; text-align:center; font-size:11.5px; font-weight:600; }
+  .reason-chip i{ display:block; font-size:17px; margin-bottom:6px; color:var(--muted); }
+  .reason-chip.selected{ border-color:var(--red); background:var(--red-soft); color:var(--red); }
+  .reason-chip.selected i{ color:var(--red); }
+
+  .toast-stack{ position:absolute; top:16px; left:16px; right:16px; z-index:99; display:flex; flex-direction:column; gap:8px; }
+  .toast{ display:flex; align-items:center; gap:9px; background:var(--green); color:var(--cream); padding:12px 14px; border-radius:12px; font-size:12px; font-weight:500; box-shadow:0 14px 26px rgba(0,0,0,0.2); transform:translateY(-30px); opacity:0; }
+  .toast i{ color:var(--gold); flex:none; }
+  .toast.error{ background:var(--red); } .toast.error i{ color:#fff; }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="phone-screen">
+
+    <!-- ================= TOPBAR ================= -->
+    <div class="topbar">
+      <div class="topbar-row">
+        <div class="greet">
+          <div class="avatar">PM</div>
+          <div><h1>Paul Mbarga</h1><p>Zone Bonanjo / Akwa</p></div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="sync-badge"><i class="fa-solid fa-circle"></i>Synchronisé</span>
+          <button class="icon-btn"><i class="fa-solid fa-bell"></i></button>
+        </div>
+      </div>
+      <div class="progress-card">
+        <div class="ring-wrap">
+          <svg viewBox="0 0 56 56"><circle class="ring-bg" cx="28" cy="28" r="24"/><circle class="ring-fg" id="ringFg" cx="28" cy="28" r="24"/></svg>
+          <div class="ring-label" id="ringLabel">0/0</div>
+        </div>
+        <div class="progress-info">
+          <h3>Tournée du jour</h3>
+          <p id="progressSub">Mercredi 6 août — chargement...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= CONTENT ================= -->
+    <div class="content">
+
+      <!-- ===== TOURNÉE ===== -->
+      <section class="page active" id="page-tournee">
+        <div class="filter-row" id="chips-tournee">
+          <button class="chip active" data-filter="all">Tous</button>
+          <button class="chip" data-filter="À faire">À faire</button>
+          <button class="chip" data-filter="Terminé">Terminés</button>
+          <button class="chip" data-filter="Manqué">Manqués</button>
+        </div>
+        <div id="tourneeList"></div>
+      </section>
+
+      <!-- ===== HISTORIQUE ===== -->
+      <section class="page" id="page-historique">
+        <div id="historiqueList"></div>
+      </section>
+
+      <!-- ===== PROFIL ===== -->
+      <section class="page" id="page-profil">
+        <div class="profile-card">
+          <div class="profile-avatar">PM</div>
+          <h3>Paul Mbarga</h3>
+          <p>Collecteur · Zone Bonanjo / Akwa</p>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-box"><div class="v">312</div><div class="l">Collectes totales</div></div>
+          <div class="stat-box"><div class="v">4.8</div><div class="l">Note moyenne</div></div>
+          <div class="stat-box"><div class="v">96%</div><div class="l">Taux réussite</div></div>
+        </div>
+        <div class="profile-row"><i class="fa-solid fa-phone"></i>+237 678 90 11 22</div>
+        <div class="profile-row"><i class="fa-solid fa-car"></i>Tricycle — MB-2024-CM</div>
+        <div class="profile-row"><i class="fa-solid fa-building"></i>Propre237 Douala SARL — Agence Bonanjo</div>
+        <div class="profile-row"><i class="fa-solid fa-circle-info"></i>Version app 1.0.0</div>
+        <button class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i>&nbsp; Se déconnecter</button>
+      </section>
+
+    </div>
+
+    <!-- ================= TAB BAR ================= -->
+    <div class="tabbar">
+      <button class="tab-item active" data-page="tournee"><i class="fa-solid fa-list-check"></i><span>Tournée</span></button>
+      <button class="tab-item" data-page="historique"><i class="fa-solid fa-clock-rotate-left"></i><span>Historique</span></button>
+      <button class="tab-item" data-page="profil"><i class="fa-solid fa-user"></i><span>Profil</span></button>
+    </div>
+
+    <!-- ================= SHEET: DÉTAIL CLIENT ================= -->
+    <div class="sheet" id="clientSheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-body" id="clientSheetBody"></div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="toast-stack" id="toastStack"></div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ============================================================
+     MOCK DATA
+  ============================================================ */
+  let tournee = [
+    { id:'t1', num:1, name:'Jean Dooh', address:'Rue 1.234, Bonanjo', time:'07:00–07:30', phone:'+237 677 12 34 56', lat:4.0483, lng:9.6987, formule:'Standard · 2x/semaine', status:'Terminé', heureArrivee:'07:04', heureDepart:'07:12', poids:4.2, commentaire:'' },
+    { id:'t2', num:2, name:'Sarah Mbida', address:'Rue 1.240, Bonanjo', time:'07:15–07:45', phone:'+237 691 77 04 22', lat:4.0490, lng:9.6995, formule:'Essentiel · 1x/semaine', status:'Terminé', heureArrivee:'07:20', heureDepart:'07:27', poids:3.1, commentaire:'' },
+    { id:'t3', num:3, name:'Marie Ekwalla', address:'Avenue de Gaulle, Akwa', time:'08:00–08:30', phone:'+237 690 45 12 78', lat:4.0512, lng:9.7020, formule:'Premium · 2x/semaine', status:'En cours' },
+    { id:'t4', num:4, name:'Robert Essomba', address:'Rue Joss, Akwa', time:'08:15–08:45', phone:'+237 655 22 11 09', lat:4.0508, lng:9.7031, formule:'Standard · 2x/semaine', status:'À faire' },
+    { id:'t5', num:5, name:'Chantal Ngo', address:'Rue Congo, Akwa', time:'08:45–09:15', phone:'+237 699 88 44 12', lat:4.0521, lng:9.7042, formule:'Essentiel · 1x/semaine', status:'À faire' },
+    { id:'t6', num:6, name:'Emmanuel Owona', address:'Rue Njo-Njo, Akwa', time:'09:15–09:45', phone:'+237 674 33 20 18', lat:4.0499, lng:9.7008, formule:'Standard · 2x/semaine', status:'À faire' },
+    { id:'t7', num:7, name:'Brice Talla', address:'Rue de la Gare, Bonanjo', time:'07:45–08:15', phone:'+237 656 40 88 15', lat:4.0475, lng:9.6970, formule:'Standard · 2x/semaine', status:'Manqué', missReason:'Client absent' },
+    { id:'t8', num:8, name:'Larissa Fouda', address:'Rue Ivy, Akwa', time:'09:45–10:15', phone:'+237 693 15 60 24', lat:4.0530, lng:9.7050, formule:'Premium · 2x/semaine', status:'À faire' },
+  ];
+  const historique = [
+    { date:'2026-08-05', entries:[
+      { name:'Jean Dooh', heure:'07:03', poids:4.0, status:'Effectué' },
+      { name:'Marie Ekwalla', heure:'07:41', poids:5.2, status:'Effectué' },
+      { name:'Sarah Mbida', heure:'08:10', poids:3.3, status:'Effectué' },
+    ]},
+    { date:'2026-08-04', entries:[
+      { name:'Robert Essomba', heure:'07:15', poids:3.8, status:'Effectué' },
+      { name:'Brice Talla', heure:'—', poids:0, status:'Manqué' },
+      { name:'Chantal Ngo', heure:'08:02', poids:4.1, status:'Effectué' },
+    ]},
+  ];
+
+  /* ============================================================
+     HELPERS
+  ============================================================ */
+  function initials(name){ return name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase(); }
+  function stateClass(status){ return { 'À faire':'state-afaire', 'En cours':'state-encours', 'Terminé':'state-termine', 'Manqué':'state-manque' }[status]; }
+  function badge(status){
+    const map = { 'À faire':'gray', 'En cours':'gold', 'Terminé':'green', 'Manqué':'red' };
+    return `<span class="badge ${map[status]}">${status}</span>`;
+  }
+  function animateList(sel){ if (reduceMotion) return; gsap.fromTo(document.querySelectorAll(sel), {opacity:0,y:10}, {opacity:1,y:0,duration:0.32,stagger:0.04,ease:'power2.out'}); }
+  function now(){ const d = new Date(); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+
+  /* ============================================================
+     PROGRESS RING
+  ============================================================ */
+  function updateProgress(){
+    const done = tournee.filter(t => t.status==='Terminé').length;
+    const total = tournee.length;
+    document.getElementById('ringLabel').textContent = `${done}/${total}`;
+    gsap.to('#ringFg', { strokeDashoffset: 151 * (1 - done/total), duration: 0.6, ease:'power2.out' });
+    document.getElementById('progressSub').textContent = `Mercredi 6 août — ${total - done} client${total-done>1?'s':''} restant${total-done>1?'s':''}`;
+  }
+
+  /* ============================================================
+     RENDER: TOURNÉE
+  ============================================================ */
+  function activeFilter(){ const b = document.querySelector('#chips-tournee .chip.active'); return b ? b.dataset.filter : 'all'; }
+  function renderTournee(){
+    const filter = activeFilter();
+    const rows = tournee.filter(t => filter==='all' || t.status===filter);
+    const el = document.getElementById('tourneeList');
+    el.innerHTML = rows.length ? rows.map(t => `
+      <div class="client-card ${stateClass(t.status)}" onclick="openClient('${t.id}')">
+        <div class="client-num">${t.num}</div>
+        <div class="client-main"><h5>${t.name}</h5><p><i class="fa-solid fa-location-dot" style="font-size:9px;"></i>${t.address}</p></div>
+        <div class="client-right"><span class="time-tag">${t.time.split('–')[0]}</span>${badge(t.status)}</div>
+      </div>`).join('') : `<div class="empty-state">Aucun client dans ce filtre</div>`;
+    animateList('#tourneeList .client-card');
+  }
+  document.querySelectorAll('#chips-tournee .chip').forEach(chip => chip.addEventListener('click', () => {
+    document.querySelectorAll('#chips-tournee .chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    renderTournee();
+  }));
+
+  /* ============================================================
+     RENDER: HISTORIQUE
+  ============================================================ */
+  function renderHistorique(){
+    const el = document.getElementById('historiqueList');
+    el.innerHTML = historique.map(day => `
+      <div class="hist-day">${new Date(day.date).toLocaleDateString('fr-FR',{weekday:'long', day:'2-digit', month:'long'})}</div>
+      ${day.entries.map(e => `
+        <div class="client-card ${e.status==='Effectué'?'state-termine':'state-manque'}">
+          <div class="client-num" style="background:${e.status==='Effectué'?'var(--green-soft)':'var(--red-soft)'}; color:${e.status==='Effectué'?'#1E9E5A':'var(--red)'};"><i class="fa-solid ${e.status==='Effectué'?'fa-check':'fa-xmark'}"></i></div>
+          <div class="client-main"><h5>${e.name}</h5><p>${e.heure!=='—' ? 'Arrivée '+e.heure : 'Non visité'}</p></div>
+          <div class="client-right">${e.poids?`<span class="time-tag">${e.poids} kg</span>`:''}${badge(e.status==='Effectué'?'Terminé':'Manqué')}</div>
+        </div>`).join('')}
+    `).join('');
+    animateList('#historiqueList .client-card');
+  }
+
+  /* ============================================================
+     CLIENT DETAIL SHEET
+  ============================================================ */
+  let currentClientId = null;
+  let flowStep = 1;
+  let flowMethod = 'qr';
+  let flowPhoto = null;
+
+  function openClient(id){
+    currentClientId = id;
+    renderClientDetail();
+    document.getElementById('overlay').classList.add('show');
+    gsap.to('#overlay', { opacity:1, duration:0.2 });
+    gsap.to('#clientSheet', { y:'0%', duration:0.38, ease:'power3.out' });
+  }
+  function closeClientSheet(){
+    gsap.to('#clientSheet', { y:'100%', duration:0.3, ease:'power2.in' });
+    gsap.to('#overlay', { opacity:0, duration:0.2, onComplete:() => document.getElementById('overlay').classList.remove('show') });
+  }
+  document.getElementById('overlay').addEventListener('click', closeClientSheet);
+
+  function renderClientDetail(){
+    const t = tournee.find(x => x.id===currentClientId);
+    const body = document.getElementById('clientSheetBody');
+
+    if (t.status === 'Terminé') {
+      body.innerHTML = `
+        <div class="cd-head"><div class="cd-avatar">${initials(t.name)}</div><div><h3>${t.name}</h3><p>${t.address}</p></div></div>
+        <div class="cd-done-card">
+          <i class="fa-solid fa-circle-check"></i><h4>Collecte validée</h4><p>Enregistrée avec succès</p>
+          <div class="cd-done-grid">
+            <div><span>Arrivée</span><strong>${t.heureArrivee||'—'}</strong></div>
+            <div><span>Départ</span><strong>${t.heureDepart||'—'}</strong></div>
+            <div><span>Poids</span><strong>${t.poids||0} kg</strong></div>
+            <div><span>Commentaire</span><strong>${t.commentaire||'Aucun'}</strong></div>
+          </div>
+        </div>`;
+      return;
+    }
+
+    if (t.status === 'Manqué') {
+      body.innerHTML = `
+        <div class="cd-head"><div class="cd-avatar">${initials(t.name)}</div><div><h3>${t.name}</h3><p>${t.address}</p></div></div>
+        <div class="cd-done-card" style="background:var(--red-soft);">
+          <i class="fa-solid fa-triangle-exclamation" style="color:var(--red);"></i>
+          <h4>Ramassage manqué</h4><p>Motif : ${t.missReason||'Non précisé'}</p>
+        </div>
+        <button class="cd-primary-btn" style="margin-top:14px;" onclick="retryClient()"><i class="fa-solid fa-rotate-right"></i>&nbsp; Réessayer maintenant</button>`;
+      return;
+    }
+
+    // À faire / En cours
+    body.innerHTML = `
+      <div class="cd-head"><div class="cd-avatar">${initials(t.name)}</div><div><h3>${t.name}</h3><p>${t.time} · ${t.address}</p></div></div>
+      <div class="cd-actions">
+        <a href="tel:${t.phone.replace(/\s/g,'')}"><i class="fa-solid fa-phone"></i>Appeler</a>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=${t.lat},${t.lng}" target="_blank"><i class="fa-solid fa-diamond-turn-right"></i>Itinéraire</a>
+        <button onclick="startMissFlow()"><i class="fa-solid fa-flag"></i>Signaler</button>
+      </div>
+      <div class="cd-info">
+        <div class="cd-info-row"><span>Formule</span><span>${t.formule}</span></div>
+        <div class="cd-info-row"><span>Téléphone</span><span>${t.phone}</span></div>
+      </div>
+      <button class="cd-primary-btn" onclick="startCollecteFlow()"><i class="fa-solid fa-play"></i>&nbsp; ${t.status==='En cours'?'Reprendre la collecte':'Démarrer la collecte'}</button>`;
+  }
+
+  function retryClient(){
+    const t = tournee.find(x => x.id===currentClientId);
+    t.status = 'À faire'; delete t.missReason;
+    renderTournee(); updateProgress(); renderClientDetail();
+  }
+
+  /* ---- marquer manqué ---- */
+  const MISS_REASONS = [
+    { icon:'fa-user-slash', label:'Client absent' },
+    { icon:'fa-trash-can-arrow-up', label:'Bac cassé' },
+    { icon:'fa-lock', label:'Accès bloqué' },
+    { icon:'fa-ellipsis', label:'Autre' },
+  ];
+  function startMissFlow(){
+    const body = document.getElementById('clientSheetBody');
+    body.innerHTML = `
+      <div class="step-title">Signaler un problème</div>
+      <div class="step-sub">Pourquoi ce ramassage ne peut pas être effectué ?</div>
+      <div class="reason-grid" id="missGrid">
+        ${MISS_REASONS.map(r => `<div class="reason-chip" data-r="${r.label}"><i class="fa-solid ${r.icon}"></i>${r.label}</div>`).join('')}
+      </div>
+      <div class="step-nav">
+        <button class="back" onclick="renderClientDetail()"><i class="fa-solid fa-arrow-left"></i></button>
+        <button class="next" id="missConfirm" disabled>Confirmer</button>
+      </div>`;
+    let selected = null;
+    document.querySelectorAll('#missGrid .reason-chip').forEach(chip => chip.addEventListener('click', () => {
+      document.querySelectorAll('#missGrid .reason-chip').forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+      selected = chip.dataset.r;
+      document.getElementById('missConfirm').disabled = false;
+    }));
+    document.getElementById('missConfirm').addEventListener('click', () => {
+      const t = tournee.find(x => x.id===currentClientId);
+      t.status = 'Manqué'; t.missReason = selected;
+      renderTournee(); updateProgress();
+      closeClientSheet();
+      showToast('Ramassage marqué comme manqué.', 'error');
+    });
+  }
+
+  /* ============================================================
+     COLLECTE FLOW — étape 1 (QR/OTP) -> 2 (photo) -> 3 (poids/commentaire)
+  ============================================================ */
+  function startCollecteFlow(){
+    const t = tournee.find(x => x.id===currentClientId);
+    if (t.status === 'À faire') t.status = 'En cours';
+    flowStep = 1; flowMethod = 'qr'; flowPhoto = null;
+    renderTournee();
+    renderFlowStep();
+  }
+
+  function stepDots(){
+    return `<div class="step-dots">${[1,2,3].map(n => `<span class="${n===flowStep?'active':''}"></span>`).join('')}</div>`;
+  }
+
+  function renderFlowStep(){
+    const body = document.getElementById('clientSheetBody');
+
+    if (flowStep === 1) {
+      body.innerHTML = `
+        ${stepDots()}
+        <div class="step-title">Valider votre présence</div>
+        <div class="step-sub">Scannez le QR code du client ou saisissez son code</div>
+        <div class="method-tabs">
+          <button id="tabQr" class="active">Code QR</button>
+          <button id="tabOtp">Code OTP</button>
+        </div>
+        <div id="methodBody"></div>
+        <div class="step-nav">
+          <button class="back" onclick="renderClientDetail()"><i class="fa-solid fa-arrow-left"></i></button>
+          <button class="next" id="step1Next" disabled>Suivant</button>
+        </div>`;
+      renderMethodBody();
+      document.getElementById('tabQr').addEventListener('click', () => { flowMethod='qr'; setActiveTab(); renderMethodBody(); });
+      document.getElementById('tabOtp').addEventListener('click', () => { flowMethod='otp'; setActiveTab(); renderMethodBody(); });
+      document.getElementById('step1Next').addEventListener('click', () => { flowStep = 2; renderFlowStep(); });
+    }
+
+    if (flowStep === 2) {
+      body.innerHTML = `
+        ${stepDots()}
+        <div class="step-title">Prendre une photo</div>
+        <div class="step-sub">Photo du dépôt comme preuve de passage</div>
+        <div class="photo-zone" id="photoZone">
+          <i class="fa-solid fa-camera"></i><span>Prendre une photo</span>
+        </div>
+        <input type="file" accept="image/*" capture="environment" id="photoInput" style="display:none;">
+        <div class="step-nav">
+          <button class="back" id="step2Back"><i class="fa-solid fa-arrow-left"></i></button>
+          <button class="next" id="step2Next" ${flowPhoto?'':'disabled'}>Suivant</button>
+        </div>`;
+      if (flowPhoto) showPhotoPreview();
+      document.getElementById('photoZone').addEventListener('click', () => document.getElementById('photoInput').click());
+      document.getElementById('photoInput').addEventListener('change', e => {
+        const file = e.target.files[0]; if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => { flowPhoto = ev.target.result; showPhotoPreview(); document.getElementById('step2Next').disabled = false; };
+        reader.readAsDataURL(file);
+      });
+      document.getElementById('step2Back').addEventListener('click', () => { flowStep = 1; renderFlowStep(); });
+      document.getElementById('step2Next').addEventListener('click', () => { flowStep = 3; renderFlowStep(); });
+    }
+
+    if (flowStep === 3) {
+      body.innerHTML = `
+        ${stepDots()}
+        <div class="step-title">Détails de la collecte</div>
+        <div class="step-sub">Dernière étape avant validation</div>
+        <div class="form-field"><label>Poids estimé (kg)</label><input type="number" step="0.1" id="poidsInput" placeholder="Ex. 4.5"></div>
+        <div class="form-field"><label>Commentaire (optionnel)</label><textarea rows="3" id="commentInput" placeholder="Ajoutez une note..."></textarea></div>
+        <div class="step-nav">
+          <button class="back" id="step3Back"><i class="fa-solid fa-arrow-left"></i></button>
+          <button class="next" id="step3Validate"><i class="fa-solid fa-check"></i>&nbsp; Valider la collecte</button>
+        </div>`;
+      document.getElementById('step3Back').addEventListener('click', () => { flowStep = 2; renderFlowStep(); });
+      document.getElementById('step3Validate').addEventListener('click', validateCollecte);
+    }
+  }
+
+  function setActiveTab(){
+    document.getElementById('tabQr').classList.toggle('active', flowMethod==='qr');
+    document.getElementById('tabOtp').classList.toggle('active', flowMethod==='otp');
+    document.getElementById('step1Next').disabled = true;
+  }
+
+  function renderMethodBody(){
+    const mb = document.getElementById('methodBody');
+    if (flowMethod === 'qr') {
+      mb.innerHTML = `
+        <div class="scan-box">
+          <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+          <div class="scan-line" id="scanLine"></div>
+          <div class="scan-hint">Cadrez le QR code du client</div>
+        </div>
+        <button class="cd-primary-btn" id="simScan" style="margin-bottom:18px;"><i class="fa-solid fa-qrcode"></i>&nbsp; Simuler la lecture du QR</button>`;
+      if (!reduceMotion) gsap.to('#scanLine', { y:150, duration:1.6, ease:'sine.inOut', yoyo:true, repeat:-1 });
+      document.getElementById('simScan').addEventListener('click', () => { document.getElementById('step1Next').disabled = false; showToast('QR code validé.'); });
+    } else {
+      mb.innerHTML = `
+        <div class="otp-row">
+          ${[0,1,2,3].map(i => `<input maxlength="1" inputmode="numeric" data-i="${i}">`).join('')}
+        </div>`;
+      const inputs = mb.querySelectorAll('.otp-row input');
+      inputs.forEach((inp, i) => {
+        inp.addEventListener('input', () => {
+          if (inp.value && i < inputs.length-1) inputs[i+1].focus();
+          const filled = [...inputs].every(x => x.value.length===1);
+          document.getElementById('step1Next').disabled = !filled;
+        });
+        inp.addEventListener('keydown', e => { if (e.key==='Backspace' && !inp.value && i>0) inputs[i-1].focus(); });
+      });
+    }
+  }
+
+  function showPhotoPreview(){
+    document.getElementById('photoZone').innerHTML = `<img src="${flowPhoto}" alt="Photo de collecte"><button class="retake-btn" id="retakeBtn"><i class="fa-solid fa-rotate"></i>Reprendre</button>`;
+    document.getElementById('retakeBtn').addEventListener('click', e => { e.stopPropagation(); document.getElementById('photoInput').click(); });
+  }
+
+  function validateCollecte(){
+    const t = tournee.find(x => x.id===currentClientId);
+    const poids = parseFloat(document.getElementById('poidsInput').value) || 0;
+    const commentaire = document.getElementById('commentInput').value.trim();
+    t.status = 'Terminé';
+    t.heureArrivee = t.heureArrivee || now();
+    t.heureDepart = now();
+    t.poids = poids;
+    t.commentaire = commentaire;
+    t.photo = flowPhoto;
+
+    renderTournee(); updateProgress();
+    closeClientSheet();
+    showToast(`Collecte enregistrée — ${t.name}`);
+  }
+
+  /* ============================================================
+     NAVIGATION (tab bar)
+  ============================================================ */
+  function goToPage(page){
+    document.querySelectorAll('.tab-item[data-page]').forEach(b => b.classList.toggle('active', b.dataset.page===page));
+    const outgoing = document.querySelector('.content .page.active');
+    const incoming = document.getElementById('page-'+page);
+    if (outgoing === incoming) return;
+    if (!reduceMotion) {
+      gsap.to(outgoing, { opacity:0, duration:0.15, onComplete:() => {
+        outgoing.classList.remove('active'); incoming.classList.add('active');
+        gsap.fromTo(incoming, {opacity:0,y:8}, {opacity:1,y:0,duration:0.25,ease:'power2.out'});
+      }});
+    } else { outgoing.classList.remove('active'); incoming.classList.add('active'); }
+    if (page === 'historique') renderHistorique();
+  }
+  document.querySelectorAll('.tab-item[data-page]').forEach(b => b.addEventListener('click', () => goToPage(b.dataset.page)));
+
+  /* ============================================================
+     TOASTS
+  ============================================================ */
+  function showToast(msg, kind='success'){
+    const stack = document.getElementById('toastStack');
+    const el = document.createElement('div');
+    el.className = 'toast' + (kind==='error' ? ' error' : '');
+    el.innerHTML = `<i class="fa-solid ${kind==='error'?'fa-circle-exclamation':'fa-circle-check'}"></i><span>${msg}</span>`;
+    stack.appendChild(el);
+    gsap.to(el, { y:0, opacity:1, duration:0.3, ease:'power2.out' });
+    setTimeout(() => gsap.to(el, { y:-20, opacity:0, duration:0.25, onComplete:()=>el.remove() }), 2800);
+  }
+
+  /* ============================================================
+     INIT
+  ============================================================ */
+  document.addEventListener('DOMContentLoaded', () => {
+    renderTournee();
+    updateProgress();
+  });
+</script>
+</body>
+</html>

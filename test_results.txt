@@ -1,0 +1,384 @@
+00:00 +0: loading C:/Users/PC/Desktop/extra/New folder/WastePro/test/application_status_screen_test.dart
+00:00 +0: C:/Users/PC/Desktop/extra/New folder/WastePro/test/application_status_screen_test.dart: candidature en attente → carte « Under review »
+00:01 +1: C:/Users/PC/Desktop/extra/New folder/WastePro/test/application_status_screen_test.dart: candidature en attente → carte « Under review »
+00:01 +2: C:/Users/PC/Desktop/extra/New folder/WastePro/test/application_status_screen_test.dart: candidature en attente → carte « Under review »
+00:01 +3: C:/Users/PC/Desktop/extra/New folder/WastePro/test/application_status_screen_test.dart: candidature en attente → carte « Under review »
+00:01 +4: C:/Users/PC/Desktop/extra/New folder/WastePro/test/application_status_screen_test.dart: candidature en attente → carte « Under review »
+00:01 +5: C:/Users/PC/Desktop/extra/New folder/WastePro/test/application_status_screen_test.dart: candidature en attente → carte « Under review »
+00:01 +6: C:/Users/PC/Desktop/extra/New folder/WastePro/test/application_status_screen_test.dart: candidature en attente → carte « Under review »
+00:01 +7: C:/Users/PC/Desktop/extra/New folder/WastePro/test/application_status_screen_test.dart: candidature en attente → carte « Under review »
+00:01 +8: C:/Users/PC/Desktop/extra/New folder/WastePro/test/application_status_screen_test.dart: candidature en attente → carte « Under review »
+00:01 +9: C:/Users/PC/Desktop/extra/New folder/WastePro/test/application_status_screen_test.dart: candidature en attente → carte « Under review »
+00:01 +10: C:/Users/PC/Desktop/extra/New folder/WastePro/test/application_status_screen_test.dart: candidature en attente → carte « Under review »
+00:01 +11: C:/Users/PC/Desktop/extra/New folder/WastePro/test/application_status_screen_test.dart: candidature en attente → carte « Under review »
+00:01 +12: C:/Users/PC/Desktop/extra/New folder/WastePro/test/application_status_screen_test.dart: candidature en attente → carte « Under review »
+00:01 +13: C:/Users/PC/Desktop/extra/New folder/WastePro/test/application_status_screen_test.dart: candidature en attente → carte « Under review »
+00:01 +14: C:/Users/PC/Desktop/extra/New folder/WastePro/test/application_status_screen_test.dart: candidature en attente → carte « Under review »
+00:01 +15: C:/Users/PC/Desktop/extra/New folder/WastePro/test/application_status_screen_test.dart: candidature en attente → carte « Under review »
+00:01 +16: C:/Users/PC/Desktop/extra/New folder/WastePro/test/application_status_screen_test.dart: candidature en attente → carte « Under review »
+00:02 +17: C:/Users/PC/Desktop/extra/New folder/WastePro/test/application_status_screen_test.dart: candidature en attente → carte « Under review »
+00:02 +18: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: dashboard renders KPIs and charts without overflow
+00:02 +19: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: dashboard renders KPIs and charts without overflow
+00:02 +20: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: dashboard renders KPIs and charts without overflow
+00:02 +21: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: dashboard renders KPIs and charts without overflow
+00:03 +22: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: dashboard renders KPIs and charts without overflow
+00:03 +23: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: dashboard renders KPIs and charts without overflow
+00:03 +24: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: dashboard renders KPIs and charts without overflow
+00:03 +25: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: dashboard renders KPIs and charts without overflow
+00:03 +26: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: dashboard renders KPIs and charts without overflow
+00:03 +27: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: dashboard renders KPIs and charts without overflow
+00:03 +28: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: dashboard renders KPIs and charts without overflow
+00:03 +29: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: dashboard renders KPIs and charts without overflow
+00:03 +30: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: dashboard renders KPIs and charts without overflow
+00:04 +31: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: dashboard renders KPIs and charts without overflow
+00:04 +32: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: dashboard renders KPIs and charts without overflow
+00:05 +33: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:05 +34: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:05 +35: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:05 +36: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:05 +37: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:05 +38: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:05 +39: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:05 +40: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:05 +41: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +42: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +43: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +44: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +45: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +46: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +47: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +48: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +49: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +50: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +51: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +52: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +53: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +54: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +55: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +56: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +57: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +58: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +59: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +60: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +61: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +62: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +63: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +64: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: clients list renders seed data
+00:06 +65: C:/Users/PC/Desktop/extra/New folder/WastePro/test/chatbot_service_test.dart: ChatbotService — Payment flow pay subscription asks for confirmation
+00:06 +66: C:/Users/PC/Desktop/extra/New folder/WastePro/test/chatbot_service_test.dart: ChatbotService — Payment flow pay subscription can be confirmed
+00:06 +67: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: create client via FAB persists in the store
+00:06 +68: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: create client via FAB persists in the store
+00:09 +69: C:/Users/PC/Desktop/extra/New folder/WastePro/test/client_dashboard_test.dart: client dashboard bottom nav does not overflow
+00:10 +70: C:/Users/PC/Desktop/extra/New folder/WastePro/test/collector_dashboard_test.dart: renders topbar, progress card and route list
+00:10 +71: C:/Users/PC/Desktop/extra/New folder/WastePro/test/collector_dashboard_test.dart: renders topbar, progress card and route list
+00:11 +72: C:/Users/PC/Desktop/extra/New folder/WastePro/test/collector_dashboard_test.dart: renders topbar, progress card and route list
+00:11 +73: C:/Users/PC/Desktop/extra/New folder/WastePro/test/collector_dashboard_test.dart: renders topbar, progress card and route list
+00:11 +74: C:/Users/PC/Desktop/extra/New folder/WastePro/test/collector_dashboard_test.dart: renders topbar, progress card and route list
+00:11 +75: C:/Users/PC/Desktop/extra/New folder/WastePro/test/collector_dashboard_test.dart: renders topbar, progress card and route list
+[OfflineSync] Cached 8 tour stops for +237678901122
+00:11 +76: C:/Users/PC/Desktop/extra/New folder/WastePro/test/company_console_test.dart: renders the company console shell and overview
+00:12 +77: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: delete client through the action sheet
+00:12 +78: C:/Users/PC/Desktop/extra/New folder/WastePro/test/client_dashboard_test.dart: tapping the bell opens the Notifications screen
+00:12 +78: C:/Users/PC/Desktop/extra/New folder/WastePro/test/collector_dashboard_test.dart: filters the route by status
+[OfflineSync] Cached 8 tour stops for +237678901122
+00:12 +79: C:/Users/PC/Desktop/extra/New folder/WastePro/test/client_dashboard_test.dart: tapping the bell opens the Notifications screen
+
+Warning: A call to tap() with finder "Found 1 widget with icon "IconData(U+0F235)": [
+  Icon(IconData(U+0F235), size: 18.0, color: Color(alpha: 1.0000, red: 0.0588, green: 0.2392, blue: 0.1804, colorSpace: ColorSpace.sRGB), dependencies: [Directionality, IconTheme]),
+]" derived an Offset (Offset(761.0, 31.0)) that would not hit test on the specified widget.
+Maybe the widget is actually off-screen, or another widget is obscuring it, or the widget cannot receive pointer events.
+The finder corresponds to this RenderBox: RenderSemanticsAnnotations#9340c relayoutBoundary=up1
+The hit test result at that offset is: HitTestResult(HitTestEntry<HitTestTarget>#22625(TextSpan(debugLabel: ((englishLike bodyMedium 2021).merge((blackMountainView bodyMedium).apply)).merge(unknown), inherit: false, color: Color(alpha: 1.0000, red: 0.9608, green: 0.9451, blue: 0.9098, colorSpace: ColorSpace.sRGB), family: Roboto, size: 8.0, weight: 700, letterSpacing: 0.3, baseline: alphabetic, height: 1.0x, leadingDistribution: even, decoration: Color(alpha: 1.0000, red: 0.1137, green: 0.1059, blue: 0.1255, colorSpace: ColorSpace.sRGB) TextDecoration.none, "1")), RenderParagraph#ecc37@Offset(1.4, 7.5), RenderPositionedBox#86c84@Offset(1.4, 9.8), RenderPadding#ce652@Offset(5.6, 11.0), RenderDecoratedBox#f7e17@Offset(5.6, 11.0), RenderConstrainedBox#59df4@Offset(5.6, 11.0), RenderStack#0c154@Offset(18.0, 18.0), RenderPadding#5ddc9@Offset(19.0, 19.0), RenderDecoratedBox#55307@Offset(19.0, 19.0), RenderConstrainedBox#4897b@Offset(19.0, 19.0), RenderPointerListener#7a5bc@Offset(19.0, 19.0), RenderSemanticsAnnotations#9ca93@Offset(19.0, 19.0), RenderMouseRegion#4b204@Offset(19.0, 19.0), RenderSemanticsAnnotations#2a23d@Offset(19.0, 19.0), RenderFlex#4ed54@Offset(741.0, 21.0), RenderFlex#4d332@Offset(741.0, 21.0), RenderPadding#a77d4@Offset(761.0, 31.0), _RenderSingleChildViewport#6e434@Offset(761.0, 31.0), RenderIgnorePointer#dcfc8@Offset(761.0, 31.0), RenderSemanticsAnnotations#2f322@Offset(761.0, 31.0), RenderPointerListener#398f6@Offset(761.0, 31.0), RenderSemanticsGestureHandler#e6b4c@Offset(761.0, 31.0), RenderPointerListener#a50d9@Offset(761.0, 31.0), _RenderScrollSemantics#2aafc@Offset(761.0, 31.0), RenderClipRect#a6575@Offset(761.0, 31.0), RenderPadding#ab97f@Offset(761.0, 31.0), RenderCustomMultiChildLayoutBox#0715d@Offset(761.0, 31.0), _RenderInkFeatures#d7b34@Offset(761.0, 31.0), RenderPhysicalModel#e9933@Offset(761.0, 31.0), RenderSemanticsAnnotations#e9e42@Offset(761.0, 31.0), RenderRepaintBoundary#7b654@Offset(761.0, 31.0), RenderIgnorePointer#6f18d@Offset(761.0, 31.0), RenderAnimatedOpacity#6cafe@Offset(761.0, 31.0), RenderAnimatedOpacity#28c4d@Offset(761.0, 31.0), _RenderColoredBox#857d4@Offset(761.0, 31.0), RenderAnimatedOpacity#8ab16@Offset(761.0, 31.0), RenderIgnorePointer#c3764@Offset(761.0, 31.0), RenderAnimatedOpacity#ec01d@Offset(761.0, 31.0), RenderRepaintBoundary#a3ec8@Offset(761.0, 31.0), RenderSemanticsAnnotations#15cf2@Offset(761.0, 31.0), RenderOffstage#a9bda@Offset(761.0, 31.0), RenderSemanticsAnnotations#60ade@Offset(761.0, 31.0), _RenderTheater#cd09e@Offset(761.0, 31.0), RenderAbsorbPointer#ec28f@Offset(761.0, 31.0), RenderPointerListener#a4ac8@Offset(761.0, 31.0), RenderSemanticsAnnotations#e3722@Offset(761.0, 31.0), RenderCustomPaint#4a6ff@Offset(761.0, 31.0), RenderSemanticsAnnotations#94d6f@Offset(761.0, 31.0), RenderSemanticsAnnotations#a99a5@Offset(761.0, 31.0), RenderSemanticsAnnotations#13b47@Offset(761.0, 31.0), RenderTapRegionSurface#bc55c@Offset(761.0, 31.0), RenderSemanticsAnnotations#0c471@Offset(761.0, 31.0), RenderSemanticsAnnotations#7c0b5@Offset(761.0, 31.0), HitTestEntry<HitTestTarget>#5e273(_ReusableRenderView#cb1bb), HitTestEntry<HitTestTarget>#fd08b(<AutomatedTestWidgetsFlutterBinding>))
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2165:25)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      main.<anonymous closure> (file:///C:/Users/PC/Desktop/extra/New%20folder/WastePro/test/client_dashboard_test.dart:157:18)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+#6      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+To silence this warning, pass "warnIfMissed: false" to "tap()".
+To make this warning fatal, set WidgetController.hitTestWarningShouldBeFatal to true.
+
+00:12 +80: C:/Users/PC/Desktop/extra/New folder/WastePro/test/company_console_test.dart: navigates to the agencies page (preview seeded data)
+00:13 +80: C:/Users/PC/Desktop/extra/New folder/WastePro/test/collector_dashboard_test.dart: opens client detail sheet from route
+[OfflineSync] Cached 8 tour stops for +237678901122
+00:13 +81: C:/Users/PC/Desktop/extra/New folder/WastePro/test/company_console_test.dart: navigates to the agencies page (preview seeded data)
+00:13 +82: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: edit client via kebab -> action sheet -> form sheet
+00:13 +83: C:/Users/PC/Desktop/extra/New folder/WastePro/test/collector_dashboard_test.dart: completes the 3-step collection flow and shows toast
+00:14 +84: C:/Users/PC/Desktop/extra/New folder/WastePro/test/collector_dashboard_test.dart: completes the 3-step collection flow and shows toast
+00:14 +85: C:/Users/PC/Desktop/extra/New folder/WastePro/test/collector_dashboard_test.dart: completes the 3-step collection flow and shows toast
+[OfflineSync] Cached 8 tour stops for +237678901122
+[OfflineSync] Failed immediate execution, queuing: type 'MockFieldValuePlatform' is not a subtype of type 'MethodChannelFieldValue'
+[OfflineSync] Failed immediate execution, queuing: type 'MockFieldValuePlatform' is not a subtype of type 'MethodChannelFieldValue'
+00:14 +86: C:/Users/PC/Desktop/extra/New folder/WastePro/test/company_console_test.dart: agency dropdown changes the overview scope
+00:15 +87: C:/Users/PC/Desktop/extra/New folder/WastePro/test/company_console_test.dart: agency dropdown changes the overview scope
+00:15 +88: C:/Users/PC/Desktop/extra/New folder/WastePro/test/company_console_test.dart: agency dropdown changes the overview scope
+00:15 +89: C:/Users/PC/Desktop/extra/New folder/WastePro/test/collector_dashboard_test.dart: marks a client as missed with a reason
+00:15 +90: C:/Users/PC/Desktop/extra/New folder/WastePro/test/collector_dashboard_test.dart: marks a client as missed with a reason
+00:15 +91: C:/Users/PC/Desktop/extra/New folder/WastePro/test/collector_dashboard_test.dart: marks a client as missed with a reason
+00:16 +92: C:/Users/PC/Desktop/extra/New folder/WastePro/test/collector_dashboard_test.dart: marks a client as missed with a reason
+[OfflineSync] Cached 8 tour stops for +237678901122
+[OfflineSync] Failed immediate execution, queuing: type 'MockFieldValuePlatform' is not a subtype of type 'MethodChannelFieldValue'
+00:16 +93: C:/Users/PC/Desktop/extra/New folder/WastePro/test/company_console_test.dart: créer une agence via le modal (badge entreprise + champs)
+00:16 +94: C:/Users/PC/Desktop/extra/New folder/WastePro/test/company_console_test.dart: créer une agence via le modal (badge entreprise + champs)
+00:16 +94: C:/Users/PC/Desktop/extra/New folder/WastePro/test/collector_dashboard_test.dart: switches to history and profile tabs
+[OfflineSync] Cached 8 tour stops for +237678901122
+00:16 +95: C:/Users/PC/Desktop/extra/New folder/WastePro/test/company_console_test.dart: créer une agence via le modal (badge entreprise + champs)
+00:17 +96: C:/Users/PC/Desktop/extra/New folder/WastePro/test/company_console_test.dart: créer une agence via le modal (badge entreprise + champs)
+00:18 +97: C:/Users/PC/Desktop/extra/New folder/WastePro/test/company_console_test.dart: créer une agence via le modal (badge entreprise + champs)
+00:18 +98: C:/Users/PC/Desktop/extra/New folder/WastePro/test/company_console_test.dart: créer une agence via le modal (badge entreprise + champs)
+00:18 +99: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: applications page lists the applications
+00:19 +100: C:/Users/PC/Desktop/extra/New folder/WastePro/test/company_console_test.dart: créer une agence avec un manager SANS téléphone est bloqué
+00:19 +101: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_created_application_flow_test.dart: console → application → backoffice: an agency created by the company console, its agency manager, the client application, and visibility in the scoped backoffice
+00:19 +102: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: review flow approves an application and assigns a collector
+00:20 +103: C:/Users/PC/Desktop/extra/New folder/WastePro/test/backoffice_screen_test.dart: review flow approves an application and assigns a collector
+00:20 +104: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_layout_check_test.dart: console desktop: render without overflow
+00:20 +105: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_layout_check_test.dart: console desktop: render without overflow
+00:21 +106: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_layout_check_test.dart: console desktop: render without overflow
+00:21 +107: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_layout_check_test.dart: console desktop: render without overflow
+00:22 +108: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_layout_check_test.dart: console desktop: render without overflow
+00:23 +109: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_layout_check_test.dart: console desktop: render without overflow
+00:24 +110: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_logout_real_provider_test.dart: super admin: logout from console → home screen (real provider)
+00:24 +111: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_logout_real_provider_test.dart: super admin: logout from console → home screen (real provider)
+00:26 +112: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_logout_real_provider_test.dart: super admin: logout from console → home screen (real provider)
+00:26 +113: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_logout_real_provider_test.dart: super admin: logout from console → home screen (real provider)
+00:26 +113: C:/Users/PC/Desktop/extra/New folder/WastePro/test/email_service_test.dart: EmailService methods sendPickupReminder returns false when not configured
+[EmailService] Not configured — skipping email to test@example.com
+00:26 +114: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_logout_real_provider_test.dart: super admin: logout from console → home screen (real provider)
+00:26 +114: C:/Users/PC/Desktop/extra/New folder/WastePro/test/email_service_test.dart: EmailService methods sendPaymentConfirmation returns false when not configured
+[EmailService] Not configured — skipping email to test@example.com
+00:26 +115: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_logout_real_provider_test.dart: super admin: logout from console → home screen (real provider)
+00:26 +115: C:/Users/PC/Desktop/extra/New folder/WastePro/test/email_service_test.dart: EmailService methods sendSubscriptionExpiry returns false when not configured
+[EmailService] Not configured — skipping email to test@example.com
+00:26 +116: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_logout_real_provider_test.dart: super admin: logout from console → home screen (real provider)
+00:26 +116: C:/Users/PC/Desktop/extra/New folder/WastePro/test/email_service_test.dart: EmailService methods sendGeneral returns false when not configured
+[EmailService] Not configured — skipping email to test@example.com
+00:26 +117: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_logout_real_provider_test.dart: super admin: logout from console → home screen (real provider)
+00:26 +117: C:/Users/PC/Desktop/extra/New folder/WastePro/test/email_service_test.dart: EmailService methods sendReport returns false when not configured
+[EmailService] Not configured — skipping email to test@example.com
+00:26 +118: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_logout_real_provider_test.dart: super admin: logout from console → home screen (real provider)
+00:27 +119: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_logout_real_provider_test.dart: super admin: logout from console → home screen (real provider)
+00:28 +120: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_logout_real_provider_test.dart: super admin: logout from console → home screen (real provider)
+00:28 +121: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_store_lifecycle_test.dart: the shared Firestore store survives console unmount and can be reused
+00:29 +122: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_store_lifecycle_test.dart: the shared Firestore store survives console unmount and can be reused
+00:29 +123: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_backoffice_store_test.dart: keeps existing data and only seeds the empty collections
+00:29 +124: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_store_lifecycle_test.dart: the console never disposes an injected store
+00:30 +125: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_store_lifecycle_test.dart: the console never disposes an injected store
+00:30 +126: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_store_lifecycle_test.dart: the console never disposes an injected store
+00:30 +127: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_store_lifecycle_test.dart: the console never disposes an injected store
+00:30 +128: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_store_lifecycle_test.dart: the console never disposes an injected store
+00:30 +129: C:/Users/PC/Desktop/extra/New folder/WastePro/test/console_store_lifecycle_test.dart: the console never disposes an injected store
+00:30 +130: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_platform_store_test.dart: seeds empty collections with the design data
+00:30 +131: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_platform_store_test.dart: seeds empty collections with the design data
+00:30 +132: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_platform_store_test.dart: seeds empty collections with the design data
+00:30 +133: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_platform_store_test.dart: seeds empty collections with the design data
+00:31 +134: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_backoffice_store_test.dart: never deletes a real account when removing an entity sharing its phone
+00:31 +135: C:/Users/PC/Desktop/extra/New folder/WastePro/test/login_flow_test.dart: superadmin login (account created in Firebase console) logs in with phone + password
+00:31 +136: C:/Users/PC/Desktop/extra/New folder/WastePro/test/login_flow_test.dart: superadmin login (account created in Firebase console) logs in with phone + password
+00:31 +137: C:/Users/PC/Desktop/extra/New folder/WastePro/test/login_flow_test.dart: superadmin login (account created in Firebase console) logs in with phone + password
+00:31 +138: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_platform_store_test.dart: keeps existing data and only seeds the empty collections
+00:31 +139: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_backoffice_store_test.dart: permission-denied after logout does not trigger a banner
+00:31 +140: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_backoffice_store_test.dart: permission-denied after logout does not trigger a banner
+00:31 +141: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_backoffice_store_test.dart: permission-denied after logout does not trigger a banner
+00:31 +142: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_backoffice_store_test.dart: permission-denied after logout does not trigger a banner
+00:31 +143: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_backoffice_store_test.dart: permission-denied after logout does not trigger a banner
+00:31 +144: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_backoffice_store_test.dart: permission-denied after logout does not trigger a banner
+00:31 +145: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_platform_store_test.dart: CRUD writes through to Firestore
+00:31 +146: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_platform_store_test.dart: CRUD writes through to Firestore
+00:31 +147: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_platform_store_test.dart: CRUD writes through to Firestore
+00:31 +148: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_backoffice_store_test.dart: permission-denied pendant une session active affiche l erreur
+00:31 +149: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_platform_store_test.dart: permission-denied after logout does not trigger a banner
+00:31 +150: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_backoffice_store_test.dart: scoped store only sees the connected agency data (Phase 3)
+00:31 +151: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_platform_store_test.dart: permission-denied pendant une session active affiche l erreur
+00:31 +152: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_backoffice_store_test.dart: approving a registration creates the client + its login account
+00:31 +153: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_backoffice_store_test.dart: approving a registration creates the client + its login account
+00:31 +154: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_platform_store_test.dart: agences and utilisateurs CRUD round-trip too
+00:31 +155: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_backoffice_store_test.dart: rejecting a registration marks it rejected without creating a client
+00:32 +156: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_backoffice_store_test.dart: rejecting a registration marks it rejected without creating a client
+00:32 +157: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_platform_store_test.dart: never clobbers an existing client account with the same phone
+00:32 +158: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_backoffice_store_test.dart: reassigning a collector updates the client, the login account and the upcoming collections
+00:32 +159: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_platform_store_test.dart: editing a legacy console user migrates its login role (Phase 1)
+00:32 +160: C:/Users/PC/Desktop/extra/New folder/WastePro/test/firestore_backoffice_store_test.dart: reassigning works even when the client has no login account
+00:32 +161: C:/Users/PC/Desktop/extra/New folder/WastePro/test/login_pending_application_test.dart: login with PENDING application → clear message (not "User not found")
+00:32 +162: C:/Users/PC/Desktop/extra/New folder/WastePro/test/login_pending_application_test.dart: login with PENDING application → clear message (not "User not found")
+00:34 +163: C:/Users/PC/Desktop/extra/New folder/WastePro/test/login_pending_application_test.dart: login with PENDING application → clear message (not "User not found")
+00:34 +164: C:/Users/PC/Desktop/extra/New folder/WastePro/test/login_pending_application_test.dart: login with PENDING application → clear message (not "User not found")
+00:34 +165: C:/Users/PC/Desktop/extra/New folder/WastePro/test/login_pending_application_test.dart: login with PENDING application → clear message (not "User not found")
+00:34 +166: C:/Users/PC/Desktop/extra/New folder/WastePro/test/login_pending_application_test.dart: login with PENDING application → clear message (not "User not found")
+00:34 +167: C:/Users/PC/Desktop/extra/New folder/WastePro/test/login_pending_application_test.dart: login with PENDING application → clear message (not "User not found")
+00:34 +168: C:/Users/PC/Desktop/extra/New folder/WastePro/test/login_pending_application_test.dart: login with PENDING application → clear message (not "User not found")
+00:34 +169: C:/Users/PC/Desktop/extra/New folder/WastePro/test/login_pending_application_test.dart: login with PENDING application → clear message (not "User not found")
+00:34 +170: C:/Users/PC/Desktop/extra/New folder/WastePro/test/login_pending_application_test.dart: login with PENDING application → clear message (not "User not found")
+00:34 +171: C:/Users/PC/Desktop/extra/New folder/WastePro/test/login_pending_application_test.dart: login with PENDING application → clear message (not "User not found")
+00:34 +172: C:/Users/PC/Desktop/extra/New folder/WastePro/test/login_pending_application_test.dart: login with PENDING application → clear message (not "User not found")
+00:34 +173: C:/Users/PC/Desktop/extra/New folder/WastePro/test/login_pending_application_test.dart: login with PENDING application → clear message (not "User not found")
+00:34 +173: C:/Users/PC/Desktop/extra/New folder/WastePro/test/navigation_service_test.dart: NavigationService.getRoute returns fallback straight-line route when API fails
+[Navigation] Route: 3.8 km, 5 min, 184 points
+00:34 +174: C:/Users/PC/Desktop/extra/New folder/WastePro/test/login_pending_application_test.dart: login with PENDING application → clear message (not "User not found")
+00:35 +175: C:/Users/PC/Desktop/extra/New folder/WastePro/test/logout_relogin_flow_test.dart: login A → logout → login B (real flow)
+00:36 +176: C:/Users/PC/Desktop/extra/New folder/WastePro/test/logout_relogin_flow_test.dart: login A → logout → login B (real flow)
+00:36 +177: C:/Users/PC/Desktop/extra/New folder/WastePro/test/logout_relogin_flow_test.dart: login A → logout → login B (real flow)
+00:37 +178: C:/Users/PC/Desktop/extra/New folder/WastePro/test/logout_relogin_flow_test.dart: login A → logout → login B (real flow)
+00:37 +179: C:/Users/PC/Desktop/extra/New folder/WastePro/test/logout_relogin_flow_test.dart: login A → logout → login B (real flow)
+00:37 +180: C:/Users/PC/Desktop/extra/New folder/WastePro/test/logout_relogin_flow_test.dart: login A → logout → login B (real flow)
+00:37 +181: C:/Users/PC/Desktop/extra/New folder/WastePro/test/logout_relogin_flow_test.dart: login A → logout → login B (real flow)
+00:37 +182: C:/Users/PC/Desktop/extra/New folder/WastePro/test/logout_relogin_flow_test.dart: login A → logout → login B (real flow)
+00:37 +183: C:/Users/PC/Desktop/extra/New folder/WastePro/test/logout_relogin_flow_test.dart: login A → logout → login B (real flow)
+00:37 +184: C:/Users/PC/Desktop/extra/New folder/WastePro/test/logout_relogin_flow_test.dart: login A → logout → login B (real flow)
+00:37 +185: C:/Users/PC/Desktop/extra/New folder/WastePro/test/logout_relogin_flow_test.dart: login A → logout → login B (real flow)
+00:37 +186: C:/Users/PC/Desktop/extra/New folder/WastePro/test/payment_service_test.dart: PaymentService charge throws if CamPay is not configured
+00:38 +187: C:/Users/PC/Desktop/extra/New folder/WastePro/test/logout_relogin_flow_test.dart: logout clears the session even if the backend signOut never completes
+00:38 +188: C:/Users/PC/Desktop/extra/New folder/WastePro/test/logout_relogin_flow_test.dart: (tearDownAll)
+00:38 +188: C:/Users/PC/Desktop/extra/New folder/WastePro/test/pre_register_screen_test.dart: agency suggestions based on entered zone, selection + submission
+00:40 +189: C:/Users/PC/Desktop/extra/New folder/WastePro/test/pre_register_screen_test.dart: agency suggestions based on entered zone, selection + submission
+00:40 +190: C:/Users/PC/Desktop/extra/New folder/WastePro/test/pre_register_screen_test.dart: agency suggestions based on entered zone, selection + submission
+00:40 +191: C:/Users/PC/Desktop/extra/New folder/WastePro/test/pre_register_screen_test.dart: agency suggestions based on entered zone, selection + submission
+00:40 +192: C:/Users/PC/Desktop/extra/New folder/WastePro/test/pre_register_screen_test.dart: agency suggestions based on entered zone, selection + submission
+00:40 +193: C:/Users/PC/Desktop/extra/New folder/WastePro/test/pre_register_screen_test.dart: agency suggestions based on entered zone, selection + submission
+00:41 +194: C:/Users/PC/Desktop/extra/New folder/WastePro/test/pre_register_screen_test.dart: agency suggestions based on entered zone, selection + submission
+00:41 +195: C:/Users/PC/Desktop/extra/New folder/WastePro/test/pre_register_screen_test.dart: agency suggestions based on entered zone, selection + submission
+00:41 +196: C:/Users/PC/Desktop/extra/New folder/WastePro/test/pre_register_screen_test.dart: agency suggestions based on entered zone, selection + submission
+00:41 +197: C:/Users/PC/Desktop/extra/New folder/WastePro/test/pre_register_screen_test.dart: agency suggestions based on entered zone, selection + submission
+00:41 +198: C:/Users/PC/Desktop/extra/New folder/WastePro/test/pre_register_screen_test.dart: agency suggestions based on entered zone, selection + submission
+00:41 +199: C:/Users/PC/Desktop/extra/New folder/WastePro/test/pre_register_screen_test.dart: agency suggestions based on entered zone, selection + submission
+00:41 +200: C:/Users/PC/Desktop/extra/New folder/WastePro/test/pre_register_screen_test.dart: agency suggestions based on entered zone, selection + submission
+00:41 +201: C:/Users/PC/Desktop/extra/New folder/WastePro/test/pre_register_screen_test.dart: agency suggestions based on entered zone, selection + submission
+00:42 +202: C:/Users/PC/Desktop/extra/New folder/WastePro/test/pre_register_screen_test.dart: agency suggestions based on entered zone, selection + submission
+00:42 +202: C:/Users/PC/Desktop/extra/New folder/WastePro/test/sms_service_test.dart: SmsService methods sendSms returns false when not configured
+[SmsService] Not configured — skipping SMS to +237677123456
+00:42 +203: C:/Users/PC/Desktop/extra/New folder/WastePro/test/pre_register_screen_test.dart: agency suggestions based on entered zone, selection + submission
+00:42 +203: C:/Users/PC/Desktop/extra/New folder/WastePro/test/sms_service_test.dart: SmsService methods all notification methods are callable when not configured
+[SmsService] Not configured — skipping SMS to +237677123456
+[SmsService] Not configured — skipping SMS to +237677123456
+[SmsService] Not configured — skipping SMS to +237677123456
+[SmsService] Not configured — skipping SMS to +237677123456
+[SmsService] Not configured — skipping SMS to +237677123456
+00:42 +204: C:/Users/PC/Desktop/extra/New folder/WastePro/test/pre_register_screen_test.dart: agency suggestions based on entered zone, selection + submission
+00:43 +205: C:/Users/PC/Desktop/extra/New folder/WastePro/test/routing_test.dart: WasteProApp router logged-in super admin → redirected to console
+00:43 +206: C:/Users/PC/Desktop/extra/New folder/WastePro/test/routing_test.dart: WasteProApp router logged-in super admin → redirected to console
+00:44 +207: C:/Users/PC/Desktop/extra/New folder/WastePro/test/routing_test.dart: WasteProApp router logged-in super admin → redirected to console
+00:45 +208: C:/Users/PC/Desktop/extra/New folder/WastePro/test/routing_test.dart: WasteProApp router logged-in super admin → redirected to console
+00:45 +209: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:46 +210: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:46 +211: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:47 +212: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:47 +213: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:48 +214: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:48 +215: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:48 +216: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:48 +217: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:48 +218: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:48 +219: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:49 +220: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:49 +220: C:/Users/PC/Desktop/extra/New folder/WastePro/test/two_factor_service_test.dart: TwoFactorService.initiate stores a 6-digit OTP in Firestore
+[2FA] OTP generated for uid-123, sending via SMS + Email
+[SmsService] Not configured — skipping SMS to +237677123456
+00:49 +221: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:49 +221: C:/Users/PC/Desktop/extra/New folder/WastePro/test/two_factor_service_test.dart: TwoFactorService.initiate stores expiry and created timestamps
+[2FA] OTP generated for uid-123, sending via SMS + Email
+[SmsService] Not configured — skipping SMS to +237677123456
+00:49 +222: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:49 +222: C:/Users/PC/Desktop/extra/New folder/WastePro/test/two_factor_service_test.dart: TwoFactorService.verify returns null on correct OTP (success)
+[2FA] OTP generated for uid-123, sending via SMS + Email
+[SmsService] Not configured — skipping SMS to +237677123456
+[2FA] OTP verified successfully for uid-123
+00:49 +223: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:49 +223: C:/Users/PC/Desktop/extra/New folder/WastePro/test/two_factor_service_test.dart: TwoFactorService.verify returns error on wrong OTP
+[2FA] OTP generated for uid-123, sending via SMS + Email
+[SmsService] Not configured — skipping SMS to +237677123456
+[2FA] Wrong OTP for uid-123 (1/5)
+00:49 +224: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:49 +225: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:49 +225: C:/Users/PC/Desktop/extra/New folder/WastePro/test/two_factor_service_test.dart: TwoFactorService.verify locks out after 5 failed attempts
+[2FA] OTP generated for uid-123, sending via SMS + Email
+[SmsService] Not configured — skipping SMS to +237677123456
+[2FA] Wrong OTP for uid-123 (1/5)
+[2FA] Wrong OTP for uid-123 (2/5)
+[2FA] Wrong OTP for uid-123 (3/5)
+[2FA] Wrong OTP for uid-123 (4/5)
+00:49 +226: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:49 +226: C:/Users/PC/Desktop/extra/New folder/WastePro/test/two_factor_service_test.dart: TwoFactorService.verify increments attempt counter on wrong OTP
+[2FA] OTP generated for uid-123, sending via SMS + Email
+[SmsService] Not configured — skipping SMS to +237677123456
+[2FA] Wrong OTP for uid-123 (1/5)
+[2FA] Wrong OTP for uid-123 (2/5)
+00:49 +227: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:49 +227: C:/Users/PC/Desktop/extra/New folder/WastePro/test/two_factor_service_test.dart: TwoFactorService.verify marks as verified on success
+[2FA] OTP generated for uid-123, sending via SMS + Email
+[SmsService] Not configured — skipping SMS to +237677123456
+[2FA] OTP verified successfully for uid-123
+00:49 +228: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:49 +228: C:/Users/PC/Desktop/extra/New folder/WastePro/test/two_factor_service_test.dart: TwoFactorService.resend generates a new OTP (different from previous)
+[2FA] OTP generated for uid-123, sending via SMS + Email
+[SmsService] Not configured — skipping SMS to +237677123456
+[2FA] OTP generated for uid-123, sending via SMS + Email
+[SmsService] Not configured — skipping SMS to +237677123456
+00:49 +229: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:49 +229: C:/Users/PC/Desktop/extra/New folder/WastePro/test/two_factor_service_test.dart: TwoFactorService.cleanup removes the OTP document
+[2FA] OTP generated for uid-123, sending via SMS + Email
+[SmsService] Not configured — skipping SMS to +237677123456
+00:49 +230: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:49 +230: C:/Users/PC/Desktop/extra/New folder/WastePro/test/two_factor_service_test.dart: TwoFactorService locked-out user returns false (locked) when initiate finds active lockout
+[2FA] User uid-123 is locked out for 9 more minutes
+00:49 +231: C:/Users/PC/Desktop/extra/New folder/WastePro/test/superadmin_user_creation_flow_test.dart: superadmin creates a user via drawer → user can log in
+00:49 +232: C:/Users/PC/Desktop/extra/New folder/WastePro/test/routing_test.dart: WasteProApp router sidebar navigation changes page without reloading
+00:49 +233: C:/Users/PC/Desktop/extra/New folder/WastePro/test/routing_test.dart: WasteProApp router sidebar navigation changes page without reloading
+00:49 +234: C:/Users/PC/Desktop/extra/New folder/WastePro/test/routing_test.dart: WasteProApp router sidebar navigation changes page without reloading
+00:50 +235: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creates a company through the drawer and shows it in the table
+00:51 +236: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creates a company through the drawer and shows it in the table
+00:51 +237: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creates a company through the drawer and shows it in the table
+00:51 +238: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creates a company through the drawer and shows it in the table
+00:51 +239: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creates a company through the drawer and shows it in the table
+00:51 +240: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creates a company through the drawer and shows it in the table
+00:51 +241: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creates a company through the drawer and shows it in the table
+00:51 +242: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creates a company through the drawer and shows it in the table
+00:51 +243: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creates a company through the drawer and shows it in the table
+00:51 +244: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creates a company through the drawer and shows it in the table
+00:51 +245: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creates a company through the drawer and shows it in the table
+00:51 +246: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creates a company through the drawer and shows it in the table
+00:51 +247: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creates a company through the drawer and shows it in the table
+00:51 +248: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creates a company through the drawer and shows it in the table
+00:51 +249: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creates a company through the drawer and shows it in the table
+00:51 +250: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creates a company through the drawer and shows it in the table
+00:51 +251: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creates a company through the drawer and shows it in the table
+00:51 +252: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creates a company through the drawer and shows it in the table
+00:51 +253: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creates a company through the drawer and shows it in the table
+00:51 +254: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creates a company through the drawer and shows it in the table
+00:52 +255: C:/Users/PC/Desktop/extra/New folder/WastePro/test/routing_test.dart: WasteProApp router logout from console returns to home screen
+00:53 +256: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: blocks saving a company with an empty required field
+00:53 +257: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: blocks saving a company with an empty required field
+00:53 +257: C:/Users/PC/Desktop/extra/New folder/WastePro/test/whatsapp_service_test.dart: WhatsApp message formatting pickup reminder is callable when not configured
+[WhatsApp] Not configured — skipping template to +237677123456
+00:53 +258: C:/Users/PC/Desktop/extra/New folder/WastePro/test/whatsapp_service_test.dart: WhatsApp message formatting pickup reminder is callable when not configured
+00:53 +259: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: blocks deleting a company that still has agencies
+00:53 +259: C:/Users/PC/Desktop/extra/New folder/WastePro/test/whatsapp_service_test.dart: WhatsApp message formatting payment confirmation is callable
+[WhatsApp] Not configured — skipping template to +237677123456
+00:53 +260: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: blocks deleting a company that still has agencies
+00:53 +260: C:/Users/PC/Desktop/extra/New folder/WastePro/test/whatsapp_service_test.dart: WhatsApp message formatting subscription expiry is callable
+[WhatsApp] Not configured — skipping template to +237677123456
+00:53 +261: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: blocks deleting a company that still has agencies
+00:53 +261: C:/Users/PC/Desktop/extra/New folder/WastePro/test/whatsapp_service_test.dart: WhatsApp message formatting missed collection is callable
+[WhatsApp] Not configured — skipping template to +237677123456
+00:53 +262: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: blocks deleting a company that still has agencies
+00:53 +262: C:/Users/PC/Desktop/extra/New folder/WastePro/test/whatsapp_service_test.dart: WhatsApp message formatting general message is callable
+[WhatsApp] Not configured — skipping message to +237677123456
+00:53 +263: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: blocks deleting a company that still has agencies
+00:53 +263: C:/Users/PC/Desktop/extra/New folder/WastePro/test/whatsapp_service_test.dart: WhatsApp message formatting free-form message is callable
+[WhatsApp] Not configured — skipping message to +237677123456
+00:53 +264: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: blocks deleting a company that still has agencies
+00:53 +265: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: blocks deleting a company that still has agencies
+00:54 +266: C:/Users/PC/Desktop/extra/New folder/WastePro/test/widget_test.dart: app shows welcome screen
+00:55 +267: C:/Users/PC/Desktop/extra/New folder/WastePro/test/widget_test.dart: app shows welcome screen
+00:56 +268: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: mobile: tapping a company card opens the company detail page
+00:56 +269: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: mobile: tapping a company card opens the company detail page
+00:56 +270: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: mobile: system back closes the drawer before popping
+00:57 +271: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: demo preview banner is shown when using the mock store
+00:57 +272: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: creating a user is blocked in demo preview
+00:58 +273: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: clicking a company row opens the full company detail page
+00:58 +274: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: command palette opens and closes with Escape
+00:59 +275: C:/Users/PC/Desktop/extra/New folder/WastePro/test/super_admin_console_test.dart: (tearDownAll)
+00:59 +275: All tests passed!
