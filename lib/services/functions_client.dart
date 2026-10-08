@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kDebugMode, kIsWeb;
 import 'package:http/http.dart' as http;
 
 import '../firebase_options.dart';
@@ -44,8 +45,12 @@ class FunctionsClient {
   /// (`cloud` = the deployed Cloud Functions).
   static const String _urlOverride = String.fromEnvironment('FUNCTIONS_URL');
 
-  /// Local server (functions/local-server.js, `npm run local`).
-  static const String localServerUrl = 'http://localhost:5055';
+  /// Local server (functions/local-server.js, `npm run local`). The Android
+  /// emulator reaches this PC at 10.0.2.2 — its own `localhost` is itself.
+  static String get localServerUrl =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.android
+          ? 'http://10.0.2.2:5055'
+          : 'http://localhost:5055';
 
   /// Debug runs (`flutter run`) use the local server on this PC; release
   /// builds use the deployed Cloud Functions.
