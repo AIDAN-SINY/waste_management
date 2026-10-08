@@ -152,24 +152,42 @@ let cachedTokenExpiry = 0;
 /** CamPay access token (cached ~50 min; CamPay tokens last 60 min). */
 async function campayToken() {
   if (cachedToken && Date.now() < cachedTokenExpiry) return cachedToken;
-  const res = await fetch(`${campayBaseUrl()}/token/`, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({
-      username: CAMPAY_USERNAME.value(),
-      password: CAMPAY_PASSWORD.value(),
-    }),
-  });
+  // Secrets set via `echo ... | firebase functions:secrets:set` or copied
+  // from the dashboard often carry a trailing newline/space, which CamPay
+  // rejects as wrong credentials.
+  const username = String(CAMPAY_USERNAME.value() || "").trim();
+  const password = String(CAMPAY_PASSWORD.value() || "").trim();
+  if (!username || !password) {
+    console.error("CamPay: CAMPAY_USERNAME / CAMPAY_PASSWORD not configured.");
+    throw new HttpError(503, "Payment service is not configured.");
+  }
+  let res;
+  try {
+    res = await fetch(`${campayBaseUrl()}/token/`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({username, password}),
+    });
+  } catch (e) {
+    console.error("CamPay: token request failed", e);
+    throw new HttpError(502, "The payment provider is unreachable.");
+  }
   const data = await res.json().catch(() => ({}));
   if (!data.token) {
-    throw new HttpError(502, "Payment provider authentication failed.");
+    // Logged server-side only: tells whether the keys are wrong or belong
+    // to the other environment (demo keys on www.campay.net or vice versa).
+    console.error(`CamPay: token rejected (HTTP ${res.status}) by ` +
+      `${campayBaseUrl()} [CAMPAY_ENV=${CAMPAY_ENV.value()}]`,
+    JSON.stringify(data));
+    throw new HttpError(502, "Payment provider authentication failed. " +
+      "Check the CamPay API keys and CAMPAY_ENV (demo/production).");
   }
   cachedToken = data.token;
   cachedTokenExpiry = Date.now() + 50 * 60 * 1000;
   return cachedToken;
 }
 
-async function campayRequest(path, init = {}) {
+async function campayRequest(path, init = {}, retried = false) {
   const token = await campayToken();
   const res = await fetch(`${campayBaseUrl()}${path}`, {
     ...init,
@@ -179,6 +197,12 @@ async function campayRequest(path, init = {}) {
       ...(init.headers || {}),
     },
   });
+  if (res.status === 401 && !retried) {
+    // Token revoked/expired before our cache did: fetch a new one once.
+    cachedToken = null;
+    cachedTokenExpiry = 0;
+    return campayRequest(path, init, true);
+  }
   const data = await res.json().catch(() => ({}));
   return {ok: res.ok, status: res.status, data};
 }
