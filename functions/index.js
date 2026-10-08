@@ -24,6 +24,8 @@ const db = getFirestore();
 //   firebase functions:secrets:set CAMPAY_WEBHOOK_KEY
 //
 // CAMPAY_ENV ("demo" | "production") goes in functions/.env.
+// CAMPAY_TOKEN (optional): the dashboard's permanent access token; used
+// instead of exchanging username/password for a temporary one.
 // CAMPAY_API overrides the CamPay base URL (local emulator tests only).
 // ============================================================
 const CAMPAY_USERNAME = defineSecret("CAMPAY_USERNAME");
@@ -31,6 +33,7 @@ const CAMPAY_PASSWORD = defineSecret("CAMPAY_PASSWORD");
 const CAMPAY_WEBHOOK_KEY = defineSecret("CAMPAY_WEBHOOK_KEY");
 const CAMPAY_ENV = defineString("CAMPAY_ENV", {default: "demo"});
 const CAMPAY_API = defineString("CAMPAY_API", {default: ""});
+const CAMPAY_TOKEN = defineString("CAMPAY_TOKEN", {default: ""});
 
 const isDemo = () => CAMPAY_ENV.value().toLowerCase() !== "production";
 const campayBaseUrl = () => CAMPAY_API.value() ||
@@ -148,9 +151,13 @@ function todayIso() {
 
 let cachedToken = null;
 let cachedTokenExpiry = 0;
+/** Set once CamPay rejects CAMPAY_TOKEN; username/password take over. */
+let permanentTokenRejected = false;
 
 /** CamPay access token (cached ~50 min; CamPay tokens last 60 min). */
 async function campayToken() {
+  const permanent = String(CAMPAY_TOKEN.value() || "").trim();
+  if (permanent && !permanentTokenRejected) return permanent;
   if (cachedToken && Date.now() < cachedTokenExpiry) return cachedToken;
   // Secrets set via `echo ... | firebase functions:secrets:set` or copied
   // from the dashboard often carry a trailing newline/space, which CamPay
@@ -199,6 +206,10 @@ async function campayRequest(path, init = {}, retried = false) {
   });
   if (res.status === 401 && !retried) {
     // Token revoked/expired before our cache did: fetch a new one once.
+    if (token === String(CAMPAY_TOKEN.value() || "").trim()) {
+      console.error("CamPay: CAMPAY_TOKEN rejected, using username/password.");
+      permanentTokenRejected = true;
+    }
     cachedToken = null;
     cachedTokenExpiry = 0;
     return campayRequest(path, init, true);
